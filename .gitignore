@@ -1,0 +1,58 @@
+# ===============================
+# Unity auto-generated folders
+# ===============================
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+[Tt]estResults/
+UserSettings/
+
+# ===============================
+# OS generated files
+# ===============================
+.DS_Store
+Thumbs.db
+
+# ===============================
+# Visual Studio / Rider / IDE files
+# ===============================
+.vs/
+.idea/
+*.sln
+*.csproj
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.sln.DotSettings
+*.csproj.DotSettings
+
+# ===============================
+# Unity Package / Exported Files
+# ===============================
+*.unitypackage
+ExportedObj/
+Recordings/
+Assets/AssetStoreTools*
+Assets/Plugins/Editor/JetBrains*
+
+# ===============================
+# Keep all .meta files (important!)
+# ===============================
+# *.meta   <- DO NOT ignore, Unity needs them to track assets
+
+# ===============================
+# Optional: ignore build files
+# ===============================
+*.apk
+*.aab
+*.exe
+*.app
+*.xcodeproj/
+*.xcworkspace/

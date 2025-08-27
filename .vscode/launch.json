@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Attach to Unity Editor",
+            "type": "unity",
+            "request": "attach"
+        },
+        {
+            "name": "Attach to Unity Play Mode (Standalone)",
+            "type": "unity",
+            "request": "attach",
+            "path": "${workspaceFolder}/Builds/YourGame.exe"
+        },
+        {
+            "name": "Attach to Unity",
+            "type": "vstuc",
+            "request": "attach",
+             "endPoint": "127.0.0.1:56321"
+        }
+    ]
+}
