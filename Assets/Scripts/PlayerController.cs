@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -12,15 +13,18 @@ public class PlayerController : MonoBehaviour
     public float groundRadius = 0.2f;
     private bool isGrounded;
     public float checkRadius = 0.2f;
-    
+
     public LayerMask groundLayer;
-    // private float horizontalInput;
-    // private float forwardInput;
+    private bool isKnocked = false;
+
+    [Header("Knockback Settings")]
+    public float knockbackForce = 3f;
+    public float knockbackDuration = 0.2f;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();    
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -53,7 +57,7 @@ public class PlayerController : MonoBehaviour
         {
             animator.ResetTrigger("isAttacking");
             animator.SetTrigger("isAttacking");
-        }  
+        }
 
         // Lật hướng nhân vật
         if (horizontalInput > 0)
@@ -65,5 +69,26 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new Vector3(-1, 1, 1);
         }
     }
+
+    public void ApplyKnockback(Vector2 dir)
+    {
+        if (isKnocked) return;
+        // rb.AddForce(dir * 10f, ForceMode2D.Impulse);
+        StartCoroutine(KnockbackRoutine(dir));
+    }
+    
+    private IEnumerator KnockbackRoutine(Vector2 dir)
+    {
+        isKnocked = true;
+
+        rb.linearVelocity = Vector2.zero;
+        // yield return new WaitForSeconds(0.5f);
+
+        rb.AddForce(dir.normalized*knockbackForce, ForceMode2D.Impulse);
+
+        yield return new WaitForSeconds(knockbackDuration);
+
+        isKnocked = false;
+    }   
   
 }
