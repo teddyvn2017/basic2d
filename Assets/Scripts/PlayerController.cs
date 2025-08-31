@@ -79,6 +79,8 @@ public class PlayerController : MonoBehaviour
     
     private IEnumerator KnockbackRoutine(Vector2 dir)
     {
+
+        Debug.Log("Knockback");
         isKnocked = true;
 
         rb.linearVelocity = Vector2.zero;

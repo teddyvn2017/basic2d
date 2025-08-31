@@ -33,7 +33,7 @@ public class EnemyPigController : MonoBehaviour
 
 
     [Header("Attack Settings")]
-    public float attackRange = 0.5f;  // khoảng cách để tấn công
+    public float attackRange = 0.5f;  // khoảng cách để tấn công, tầm đánh (mở rộng xung quanh attackPoint)
     public float attackCooldown = 2f; // thời gian chờ giữa 2 lần tấn công
     private float attackTimer = 0f;
 
@@ -55,11 +55,8 @@ public class EnemyPigController : MonoBehaviour
 
     void Update()
     {
-
-        // Update attack timer
         attackTimer += Time.deltaTime;
 
-        // Knockback logic
         if (isKnockBack)
         {
             knockbackTimer -= Time.deltaTime;
@@ -67,16 +64,23 @@ public class EnemyPigController : MonoBehaviour
                 isKnockBack = false;
             return;
         }
-       
-        // Kiểm tra khoảng cách với player
-        HandleAttack();
-        //Lấy thông tin state hiện tại của animator ở layer 0 (layer mặc định)
-        //kiểm tra xem state đó có phải là "Attack" hay không
-        // if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-        // {
-        //     Move();
-        //     CheckGroundAhead();
-        // }
+
+        if (playerInRange)
+        {
+            StopMovement();
+            HandleFlip();
+            if (attackTimer >= attackCooldown)
+            {
+                animator.SetTrigger("Attack");
+                attackTimer = 0f;
+            }
+        }
+
+        else
+        {
+            Move();
+            CheckGroundAhead();
+        }
     }
     void Move()
     {
@@ -171,36 +175,35 @@ public class EnemyPigController : MonoBehaviour
         animator.SetTrigger("Attack");
     }
 
-    //hàm gây damege cho player, được gọi trong animation Attack
+
+    // 🟥 Hàm này sẽ được gọi trong Animation Event (frame va chạm)
     public void AttackPlayer()
     {
-        // Collider2D hitPlayer = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayer);        
-        // if (hitPlayer != null)
-        // {
-        //     PlayerHealth playerHealth = hitPlayer.GetComponent<PlayerHealth>();
-        //     if (playerHealth != null)
-        //     {
-        //         Vector2 knockbackDirection = (hitPlayer.transform.position - transform.position).normalized;
-        //         playerHealth.TakeDamage(attackDamage, knockbackDirection);
-        //         Debug.Log("Attack Player");
-        //     }
-        // }
-
-        // cách 2 
-        if (player == null) return;
-
-        // Kiem tra khoang cach giua enemy va player, thay vì dùng trigger như comment code tren
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-        if (distanceToPlayer <= attackRange)
+        Collider2D hitPlayer = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayer);
+        if (hitPlayer != null)
         {
-            Vector2 knockbackDirection = (player.position - transform.position).normalized;
-            player.GetComponent<PlayerHealth>()?.TakeDamage(attackDamage, knockbackDirection);
-            Debug.Log("Enemy hit Player!");
+            Debug.Log("hitPlayer: " + hitPlayer.gameObject.name);
+            
+            PlayerHealth playerHealth = hitPlayer.GetComponent<PlayerHealth>();
+
+            if (playerHealth != null)
+            {
+                Debug.Log("playerHealth: " + playerHealth);
+                Vector2 knockbackDirection = (hitPlayer.transform.position - transform.position).normalized;
+                playerHealth.TakeDamage(attackDamage, knockbackDirection);                
+            }
         }
     }
 
+
     // gọi cuối animation Attack
     public void FinishAttack()
+    {
+        isAttacking = false;
+    }
+
+    //hàm được gọi trong Animation Event (frame va chạm)
+    public void AttackAnimationEnd()
     {
         isAttacking = false;
     }
@@ -224,60 +227,20 @@ public class EnemyPigController : MonoBehaviour
         }
     }
 
-
-    private void HandleAttack()
+    private void HandleFlip()
     {
         if (player == null) return;
 
-        // Tăng timer giữa các lần attack
-        attackTimer += Time.deltaTime;
-
-        // Tính khoảng cách đến player
-        float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-        Debug.Log("distanceToPlayer: " + distanceToPlayer);
-        if (distanceToPlayer <= attackRange)
-        {
-            //Dừng di chuyển khi trong tầm tấn công
-            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
-            // Ngưng chạy khi vào range
-            animator.SetBool("isRunning", false);
-            Debug.Log("Player trong range attack");
-            // Quay mặt về phía player nếu cần
-            if (player.position.x > transform.position.x && !isFacingRight)
-            {
-                Flip();
-            }
-            else if (player.position.x < transform.position.x && isFacingRight)
-            {
-                Flip();
-            }
-
-            // Ngưng chạy khi vào range
-            animator.SetBool("isRunning", false);
-
-            // Nếu cooldown đủ → bắt đầu Attack
-            if (attackTimer >= attackCooldown)
-            {
-                animator.SetTrigger("Attack"); // Animation Event sẽ gọi AttackPlayer()
-                attackTimer = 0f;
-            }
-        }
-        else
-        {
-            // ✅ Di chuyển về phía player khi chưa trong range
-            animator.SetBool("isRunning", true);
-            Move();
-            CheckGroundAhead();
-        }
+        if (player.position.x > transform.position.x && !isFacingRight)
+            Flip();
+        else if (player.position.x < transform.position.x && isFacingRight)
+            Flip();
     }
-
     
-    // void UpdateAttackPoint()
-    // {
-    //     if (attackPoint != null)
-    //     {
-    //         attackPoint.localPosition = new Vector3(isFacingRight ? 0.5f : -0.5f, 0, 0);
-    //     }
-    // }
 
+    private void StopMovement()
+    {
+        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+        animator.SetBool("isRunning", false);
+    }
 }
