@@ -1340,6 +1340,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1329162223}
     - target: {fileID: 7102074446204609145, guid: 307cdb8a076399b41878644e91785b50, type: 3}
+      propertyPath: moveSpeed
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7102074446204609145, guid: 307cdb8a076399b41878644e91785b50, type: 3}
       propertyPath: attackPoint
       value: 
       objectReference: {fileID: 1373106274731494085}
@@ -1350,6 +1354,10 @@ PrefabInstance:
     - target: {fileID: 7102074446204609145, guid: 307cdb8a076399b41878644e91785b50, type: 3}
       propertyPath: attackCooldown
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7102074446204609145, guid: 307cdb8a076399b41878644e91785b50, type: 3}
+      propertyPath: knockbackForce
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7102074446204609145, guid: 307cdb8a076399b41878644e91785b50, type: 3}
       propertyPath: knockbackUpForce

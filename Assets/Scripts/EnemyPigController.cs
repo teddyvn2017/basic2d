@@ -6,7 +6,7 @@ public class EnemyPigController : MonoBehaviour
 {
     // khi khai báo public, biến sẽ hiện ra trong Inspector của Unity.
     // chỉnh sửa giá trị trực tiếp trong Unity mà không cần mở code.
-    public float moveSpeed = 1f;
+    public float moveSpeed = 1.2f;
     private Rigidbody2D rb;
     private Animator animator;
     private bool isFacingRight = false;
@@ -53,40 +53,6 @@ public class EnemyPigController : MonoBehaviour
         StartCoroutine(MoveRoutine());
     }
 
-
-
-    // void Update()
-    // {
-    //     if (isAttacking) return;
-
-    //     if (isKnockBack)
-    //     {
-    //         knockbackTimer -= Time.deltaTime;
-    //         if (knockbackTimer <= 0)
-    //         {
-    //             isKnockBack = false;
-    //         }
-    //         return; // không chạy Move() khi knockback
-    //     }
-
-    //     // Move và check ground
-    //     Move();
-    //     CheckGroundAhead();
-
-    //     // Tăng timer
-    //     attackTimer += Time.deltaTime;
-
-    //     // kiểm tra khoảng cách 
-    //     float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-
-    //     if (distanceToPlayer <= attackRange && attackTimer >= attackCooldown)
-    //     {
-    //         Debug.Log("Attack Player");
-    //         TriggerAttackAnimation();
-    //         attackTimer = 0f; // reset timer
-    //     }
-    // }
-
     void Update()
     {
 
@@ -101,33 +67,16 @@ public class EnemyPigController : MonoBehaviour
                 isKnockBack = false;
             return;
         }
-
-        // Player in attack range
-        // if (playerInRange)
-        // {
-        //     // rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
-        //     animator.SetBool("isRunning", false);
-
-        //     if (attackTimer >= attackCooldown)
-        //     {
-        //         TriggerAttackAnimation();
-        //         attackTimer = 0f;
-        //     }
-        //     // Debug.Log("Attack Player");
-        // }
-
+       
         // Kiểm tra khoảng cách với player
         HandleAttack();
         //Lấy thông tin state hiện tại của animator ở layer 0 (layer mặc định)
         //kiểm tra xem state đó có phải là "Attack" hay không
-        if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-        {
-            Move();
-            CheckGroundAhead();
-        }
-
-
-
+        // if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+        // {
+        //     Move();
+        //     CheckGroundAhead();
+        // }
     }
     void Move()
     {
@@ -273,8 +222,8 @@ public class EnemyPigController : MonoBehaviour
             Debug.Log("Player đã rời khỏi phạm vi tấn công!");
             playerInRange = false;
         }
-    }    
-    
+    }
+
 
     private void HandleAttack()
     {
@@ -285,9 +234,14 @@ public class EnemyPigController : MonoBehaviour
 
         // Tính khoảng cách đến player
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
-
+        Debug.Log("distanceToPlayer: " + distanceToPlayer);
         if (distanceToPlayer <= attackRange)
         {
+            //Dừng di chuyển khi trong tầm tấn công
+            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            // Ngưng chạy khi vào range
+            animator.SetBool("isRunning", false);
+            Debug.Log("Player trong range attack");
             // Quay mặt về phía player nếu cần
             if (player.position.x > transform.position.x && !isFacingRight)
             {
@@ -307,6 +261,13 @@ public class EnemyPigController : MonoBehaviour
                 animator.SetTrigger("Attack"); // Animation Event sẽ gọi AttackPlayer()
                 attackTimer = 0f;
             }
+        }
+        else
+        {
+            // ✅ Di chuyển về phía player khi chưa trong range
+            animator.SetBool("isRunning", true);
+            Move();
+            CheckGroundAhead();
         }
     }
 
