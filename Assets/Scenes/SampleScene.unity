@@ -1373,6 +1373,10 @@ PrefabInstance:
       value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7102074446204609145, guid: 307cdb8a076399b41878644e91785b50, type: 3}
+      propertyPath: attackCollider
+      value: 
+      objectReference: {fileID: 1173008959}
+    - target: {fileID: 7102074446204609145, guid: 307cdb8a076399b41878644e91785b50, type: 3}
       propertyPath: attackCooldown
       value: 3
       objectReference: {fileID: 0}
@@ -1476,13 +1480,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26c93fbe3bdd0e24fa3ed6fa75f18e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackPoint: {fileID: 1173008958}
-  attackRange: 0.5
-  playerLayer:
-    serializedVersion: 2
-    m_Bits: 64
   attackDamage: 1
+  attackRange: 0.5
+  attackCooldown: 2
+  attackCollider: {fileID: 1173008959}
   isAttacking: 0
+  playerInRange: 0
+  animator: {fileID: 1373106274731494097}
+--- !u!95 &1373106274731494097 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9059236000282262765, guid: 307cdb8a076399b41878644e91785b50, type: 3}
+  m_PrefabInstance: {fileID: 1373106274731494084}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

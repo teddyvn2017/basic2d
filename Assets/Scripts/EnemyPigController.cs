@@ -33,52 +33,63 @@ public class EnemyPigController : MonoBehaviour
 
 
     [Header("Attack Settings")]
-    public float attackRange = 0.5f;  // khoảng cách để tấn công, tầm đánh (mở rộng xung quanh attackPoint)
-    public float attackCooldown = 2f; // thời gian chờ giữa 2 lần tấn công
+    
+    // public float attackCooldown = 2f; // thời gian chờ giữa 2 lần tấn công
     private float attackTimer = 0f;
 
-    [HideInInspector] public bool isKnockBack = false;
+    
 
-    private bool playerInRange = false;
+    [HideInInspector] public bool isKnockBack = false;    
+
+    private EnemyPigAttack enemyPigAttack;
+    // private bool playerInRange = false;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        enemyPigAttack = GetComponent<EnemyPigAttack>();
         StartCoroutine(MoveRoutine());
     }
 
+    // void Update()
+    // {
+    //     attackTimer += Time.deltaTime;
+
+    //     if (isKnockBack) return;
+
+    //     if (playerInRange)
+    //     {
+    //         StopMovement();
+    //         HandleFlip();
+
+    //     }
+
+    //     else
+    //     {
+    //         Move();
+    //         CheckGroundAhead();
+    //     }
+    // }
+
     void Update()
     {
-        attackTimer += Time.deltaTime;
-
-        // if (isKnockBack)
-        // {
-        //     knockbackTimer -= Time.deltaTime;
-        //     if (knockbackTimer <= 0f)
-        //         isKnockBack = false;
-        //     return;
-        // }
 
         if (isKnockBack) return;
 
-        if (playerInRange)
+        if (enemyPigAttack.playerInRange)
         {
+            Debug.Log("playerInRange: " + enemyPigAttack.playerInRange);
             StopMovement();
             HandleFlip();
-            if (attackTimer >= attackCooldown)
-            {
-                animator.SetTrigger("Attack");
-                attackTimer = 0f;
-            }
         }
-
-        else
+        else 
         {
             Move();
             CheckGroundAhead();
         }
     }
+
     void Move()
     {
         if (!isMoving)
@@ -148,41 +159,6 @@ public class EnemyPigController : MonoBehaviour
         Invoke(nameof(EndKnockback), knockbackDuration);
     }
 
-    // private IEnumerator ResetKnockback(float delay = 0.2f)
-    // {
-    //     yield return new WaitForSeconds(delay);
-    //     isKnockBack = false;
-    // }
-    // Optional: hiển thị vùng groundCheck trên Scene để debug
-    private void OnDrawGizmosSelected()
-    {
-        if (groundCheck != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
-            // Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-        }
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-
-            Debug.Log("Player đã vào phạm vi tấn công!");
-            playerInRange = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Player"))
-        {
-            Debug.Log("Player đã rời khỏi phạm vi tấn công!");
-            playerInRange = false;
-        }
-    }
-
     private void HandleFlip()
     {
         if (player == null) return;
@@ -198,9 +174,10 @@ public class EnemyPigController : MonoBehaviour
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
         animator.SetBool("isRunning", false);
     }
-    
+
     private void EndKnockback()
     {
         isKnockBack = false;
     }
+    
 }
