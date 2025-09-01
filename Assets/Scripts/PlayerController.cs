@@ -18,9 +18,9 @@ public class PlayerController : MonoBehaviour
     // private bool isKnocked = false;
 
     [Header("Knockback Settings")]
-    public float knockbackForce = 1.5f;
+    public float knockbackForce = 1f;
     public float knockbackDuration = 0.4f;
-    public float knockbackUpForce = 2f;
+    public float knockbackUpForce = 1f;
 
     [HideInInspector] public bool isKnockBack = false;
 
@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        //khi knockback thì tạm thời không cho về trạng thái idle
+        if (isKnockBack) return;
 
         // Đảm bảo rotation của trục Z luôn bằng 0
         transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -75,7 +77,6 @@ public class PlayerController : MonoBehaviour
     }
 
     // knockback by enemy
-
     public void KnockBack(Transform attacker)
     {
         // Debug.Log("KnockBack");
@@ -85,13 +86,20 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = Vector2.zero;
 
         animator.SetTrigger("Hit");
+        // animator.SetBool("isRunning", false);
 
         // Tính hướng knockback: player bên trái enemy → hất sang trái (-1), bên phải → hất sang phải (+1)
         float horizontalDir = (transform.position.x < attacker.position.x) ? -1f : 1f;
 
         // Cộng lực theo hướng enemy
         // Add lực bật ngược
-        rb.AddForce(new Vector2(horizontalDir * knockbackForce, knockbackUpForce), ForceMode2D.Impulse);
+
+        Vector2 knockbackDir = new Vector2(horizontalDir * knockbackForce, knockbackUpForce);
+        // Debug.Log("knockbackDir x: " + knockbackDir.x);
+        rb.AddForce(knockbackDir, ForceMode2D.Impulse);
+
+        // Debug.Log("Knockback: X=" + horizontalDir * knockbackForce + "  Y=" + knockbackUpForce);
+        // rb.AddForce(new Vector2(horizontalDir * knockbackForce, knockbackUpForce), ForceMode2D.Impulse);
 
         Invoke(nameof(EndKnockback), knockbackDuration);
     }

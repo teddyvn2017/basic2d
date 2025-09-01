@@ -27,7 +27,7 @@ public class EnemyPigController : MonoBehaviour
 
     [Header("Knockback Settings")]
     public float knockbackForce = 1.5f;
-    public float knockbackUpForce = 1f;
+    public float knockbackUpForce = 2f;
     public float knockbackDuration = 0.4f;
     private float knockbackTimer;
 
@@ -36,7 +36,7 @@ public class EnemyPigController : MonoBehaviour
     public float attackRange = 0.5f;  // khoảng cách để tấn công, tầm đánh (mở rộng xung quanh attackPoint)
     public float attackCooldown = 2f; // thời gian chờ giữa 2 lần tấn công
     private float attackTimer = 0f;
-    
+
     [HideInInspector] public bool isKnockBack = false;
 
     private bool playerInRange = false;
@@ -52,13 +52,15 @@ public class EnemyPigController : MonoBehaviour
     {
         attackTimer += Time.deltaTime;
 
-        if (isKnockBack)
-        {
-            knockbackTimer -= Time.deltaTime;
-            if (knockbackTimer <= 0f)
-                isKnockBack = false;
-            return;
-        }
+        // if (isKnockBack)
+        // {
+        //     knockbackTimer -= Time.deltaTime;
+        //     if (knockbackTimer <= 0f)
+        //         isKnockBack = false;
+        //     return;
+        // }
+
+        if (isKnockBack) return;
 
         if (playerInRange)
         {
@@ -137,21 +139,20 @@ public class EnemyPigController : MonoBehaviour
         knockbackTimer = knockbackDuration;
 
         // Xác định hướng knockback
-        float knockbackDir;
-        knockbackDir = (transform.position.x < attacker.position.x) ? -1f : 1f;
+        float horizontalDir = (transform.position.x < attacker.position.x) ? -1f : 1f;
 
         // Reset vận tốc trước khi AddForce
-        rb.linearVelocity = Vector2.zero;
-
-        // AddForce bật ngược
-        rb.AddForce(new Vector2(knockbackDir * knockbackForce, knockbackUpForce), ForceMode2D.Impulse);
+        Vector2 knockbackDir = new Vector2(horizontalDir * knockbackForce, knockbackUpForce);
+        // Debug.Log("knockbackDir x: " + knockbackDir.x);
+        rb.AddForce(knockbackDir, ForceMode2D.Impulse);
+        Invoke(nameof(EndKnockback), knockbackDuration);
     }
 
-    private IEnumerator ResetKnockback(float delay = 0.2f)
-    {
-        yield return new WaitForSeconds(delay);
-        isKnockBack = false;
-    }
+    // private IEnumerator ResetKnockback(float delay = 0.2f)
+    // {
+    //     yield return new WaitForSeconds(delay);
+    //     isKnockBack = false;
+    // }
     // Optional: hiển thị vùng groundCheck trên Scene để debug
     private void OnDrawGizmosSelected()
     {
@@ -190,11 +191,16 @@ public class EnemyPigController : MonoBehaviour
             Flip();
         else if (player.position.x < transform.position.x && isFacingRight)
             Flip();
-    }    
+    }
 
     private void StopMovement()
     {
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
         animator.SetBool("isRunning", false);
+    }
+    
+    private void EndKnockback()
+    {
+        isKnockBack = false;
     }
 }
