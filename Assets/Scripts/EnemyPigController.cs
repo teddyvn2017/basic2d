@@ -26,8 +26,8 @@ public class EnemyPigController : MonoBehaviour
     public Transform player; // gán Player trong Inspector
 
     [Header("Knockback Settings")]
-    public float knockbackForce = 1f;
-    public float knockbackUpForce = 0.5f;
+    public float knockbackForce = 1.5f;
+    public float knockbackUpForce = 1f;
     public float knockbackDuration = 0.4f;
     private float knockbackTimer;
 
@@ -36,13 +36,8 @@ public class EnemyPigController : MonoBehaviour
     public float attackRange = 0.5f;  // khoảng cách để tấn công, tầm đánh (mở rộng xung quanh attackPoint)
     public float attackCooldown = 2f; // thời gian chờ giữa 2 lần tấn công
     private float attackTimer = 0f;
-
-    public int attackDamage = 1;
-    public Transform attackPoint;
-
+    
     [HideInInspector] public bool isKnockBack = false;
-
-    [HideInInspector] public bool isAttacking = false;
 
     private bool playerInRange = false;
 
@@ -133,6 +128,7 @@ public class EnemyPigController : MonoBehaviour
         }
     }
 
+    //enemy knockback by player
     public void KnockBack(Transform attacker = null)
     {
         if (isKnockBack) return;
@@ -151,7 +147,6 @@ public class EnemyPigController : MonoBehaviour
         rb.AddForce(new Vector2(knockbackDir * knockbackForce, knockbackUpForce), ForceMode2D.Impulse);
     }
 
-
     private IEnumerator ResetKnockback(float delay = 0.2f)
     {
         yield return new WaitForSeconds(delay);
@@ -163,49 +158,9 @@ public class EnemyPigController : MonoBehaviour
         if (groundCheck != null)
         {
             Gizmos.color = Color.red;
-            // Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
-            Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+            Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
+            // Gizmos.DrawWireSphere(attackPoint.position, attackRange);
         }
-    }
-
-    //hiển thị animation tấn công
-    void TriggerAttackAnimation()
-    {
-        isAttacking = true;
-        animator.SetTrigger("Attack");
-    }
-
-
-    // 🟥 Hàm này sẽ được gọi trong Animation Event (frame va chạm)
-    public void AttackPlayer()
-    {
-        Collider2D hitPlayer = Physics2D.OverlapCircle(attackPoint.position, attackRange, playerLayer);
-        if (hitPlayer != null)
-        {
-            Debug.Log("hitPlayer: " + hitPlayer.gameObject.name);
-            
-            PlayerHealth playerHealth = hitPlayer.GetComponent<PlayerHealth>();
-
-            if (playerHealth != null)
-            {
-                Debug.Log("playerHealth: " + playerHealth);
-                Vector2 knockbackDirection = (hitPlayer.transform.position - transform.position).normalized;
-                playerHealth.TakeDamage(attackDamage, knockbackDirection);                
-            }
-        }
-    }
-
-
-    // gọi cuối animation Attack
-    public void FinishAttack()
-    {
-        isAttacking = false;
-    }
-
-    //hàm được gọi trong Animation Event (frame va chạm)
-    public void AttackAnimationEnd()
-    {
-        isAttacking = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -235,8 +190,7 @@ public class EnemyPigController : MonoBehaviour
             Flip();
         else if (player.position.x < transform.position.x && isFacingRight)
             Flip();
-    }
-    
+    }    
 
     private void StopMovement()
     {

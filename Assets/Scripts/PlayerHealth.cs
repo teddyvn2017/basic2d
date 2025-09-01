@@ -16,25 +16,15 @@ public class PlayerHealth : MonoBehaviour
         playerController = GetComponent<PlayerController>();
     }
 
-    // Update is called once per frame
-    
 
-    public void TakeDamage(int damage, Vector2 knockbackDirection)
+    public void TakeDamage(int damage)
     {
 
         currentHealth -= damage;
         Debug.Log("currentHealth: " + currentHealth);
         if (currentHealth <= 0)
-        {
             Die();
-        }
-        else
-        {
-            if (playerController != null)
-            {
-                playerController.ApplyKnockback(knockbackDirection);
-            }
-        }
+        
     }
 
     private void Die()

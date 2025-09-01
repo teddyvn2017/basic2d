@@ -1220,6 +1220,8 @@ MonoBehaviour:
     m_Bits: 8
   knockbackForce: 3
   knockbackDuration: 0.2
+  knockbackUpForce: 0.5
+  isKnockBack: 0
 --- !u!50 &1329162225
 Rigidbody2D:
   serializedVersion: 5
@@ -1321,6 +1323,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 3
+--- !u!1 &1843034241 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3116834851005898649, guid: 307cdb8a076399b41878644e91785b50, type: 3}
+  m_PrefabInstance: {fileID: 1373106274731494084}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1373106274731494084
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1360,7 +1367,7 @@ PrefabInstance:
     - target: {fileID: 7102074446204609145, guid: 307cdb8a076399b41878644e91785b50, type: 3}
       propertyPath: attackPoint
       value: 
-      objectReference: {fileID: 1373106274731494085}
+      objectReference: {fileID: 0}
     - target: {fileID: 7102074446204609145, guid: 307cdb8a076399b41878644e91785b50, type: 3}
       propertyPath: attackRange
       value: 0.5
@@ -1447,13 +1454,35 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7218089913388795363, guid: 307cdb8a076399b41878644e91785b50, type: 3}
       insertIndex: 0
       addedObject: {fileID: 1173008958}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3116834851005898649, guid: 307cdb8a076399b41878644e91785b50, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1373106274731494092}
   m_SourcePrefab: {fileID: 100100000, guid: 307cdb8a076399b41878644e91785b50, type: 3}
 --- !u!4 &1373106274731494085 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7218089913388795363, guid: 307cdb8a076399b41878644e91785b50, type: 3}
   m_PrefabInstance: {fileID: 1373106274731494084}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1373106274731494092
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1843034241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26c93fbe3bdd0e24fa3ed6fa75f18e12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackPoint: {fileID: 1173008958}
+  attackRange: 0.5
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  attackDamage: 1
+  isAttacking: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

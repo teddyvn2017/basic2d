@@ -15,11 +15,14 @@ public class PlayerController : MonoBehaviour
     public float checkRadius = 0.2f;
 
     public LayerMask groundLayer;
-    private bool isKnocked = false;
+    // private bool isKnocked = false;
 
     [Header("Knockback Settings")]
-    public float knockbackForce = 3f;
-    public float knockbackDuration = 0.2f;
+    public float knockbackForce = 1.5f;
+    public float knockbackDuration = 0.4f;
+    public float knockbackUpForce = 2f;
+
+    [HideInInspector] public bool isKnockBack = false;
 
     void Start()
     {
@@ -29,6 +32,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+
         // Đảm bảo rotation của trục Z luôn bằng 0
         transform.rotation = Quaternion.Euler(0, 0, 0);
 
@@ -70,27 +74,31 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void ApplyKnockback(Vector2 dir)
+    // knockback by enemy
+
+    public void KnockBack(Transform attacker)
     {
-        if (isKnocked) return;
-        // rb.AddForce(dir * 10f, ForceMode2D.Impulse);
-        StartCoroutine(KnockbackRoutine(dir));
+        // Debug.Log("KnockBack");
+        if (isKnockBack) return;
+
+        isKnockBack = true;
+        rb.linearVelocity = Vector2.zero;
+
+        animator.SetTrigger("Hit");
+
+        // Tính hướng knockback: player bên trái enemy → hất sang trái (-1), bên phải → hất sang phải (+1)
+        float horizontalDir = (transform.position.x < attacker.position.x) ? -1f : 1f;
+
+        // Cộng lực theo hướng enemy
+        // Add lực bật ngược
+        rb.AddForce(new Vector2(horizontalDir * knockbackForce, knockbackUpForce), ForceMode2D.Impulse);
+
+        Invoke(nameof(EndKnockback), knockbackDuration);
     }
     
-    private IEnumerator KnockbackRoutine(Vector2 dir)
+    private void EndKnockback()
     {
+        isKnockBack = false;
+    }
 
-        Debug.Log("Knockback");
-        isKnocked = true;
-
-        rb.linearVelocity = Vector2.zero;
-        // yield return new WaitForSeconds(0.5f);
-
-        rb.AddForce(dir.normalized*knockbackForce, ForceMode2D.Impulse);
-
-        yield return new WaitForSeconds(knockbackDuration);
-
-        isKnocked = false;
-    }   
-  
 }
