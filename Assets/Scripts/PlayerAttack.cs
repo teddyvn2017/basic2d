@@ -24,14 +24,14 @@ public class PlayerAttack : MonoBehaviour
         if (Input.GetKeyDown(attackKey))
         {
             Attack();
-        }        
+        }
     }
 
     void Attack()
     {
         // Trigger animation Attack
         animator.SetTrigger("isAttacking");
-        // Collider sẽ bật thông qua Animation Event
+
     }
 
     // Dùng Animation Event để bật collider đúng frame đánh
@@ -49,13 +49,28 @@ public class PlayerAttack : MonoBehaviour
     {
         if (!attackCollider.enabled) return;
 
-        if (other.CompareTag("Enemy"))    
+        if (other.CompareTag("Enemy"))
         {
             EnemyPigHealth enemyHealth = other.GetComponent<EnemyPigHealth>();
             if (enemyHealth != null)
             {
-                enemyHealth.TakeDamage(attackDamage,this.transform);
+                enemyHealth.TakeDamage(attackDamage, this.transform);
             }
         }
+    }
+    
+    public void AttackEnemy(Collider2D other)
+    {
+
+        if (attackCollider == null || !attackCollider.enabled) return;
+
+        EnemyPigHealth enemyHealth = other.GetComponent<EnemyPigHealth>();
+        EnemyPigController enemyPigController = other.GetComponent<EnemyPigController>();
+
+        if (enemyHealth != null)
+            enemyHealth.TakeDamage(attackDamage);
+
+        if (enemyPigController != null)
+            enemyPigController.KnockBack(transform);       
     }
 }

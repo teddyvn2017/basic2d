@@ -147,6 +147,7 @@ public class EnemyPigController : MonoBehaviour
         if (isKnockBack) return;
 
         isKnockBack = true;
+        animator.SetTrigger("Hit");
         knockbackTimer = knockbackDuration;
 
         // Xác định hướng knockback

@@ -45,7 +45,7 @@ public class EnemyPigAttack : MonoBehaviour
         isAttacking = false;
     }
 
-    public void StartAttack(Collider2D other)
+    public void AttackPlayer(Collider2D other)
     {
 
         if (attackCollider == null || !attackCollider.enabled) return;
@@ -83,7 +83,7 @@ public class EnemyPigAttack : MonoBehaviour
     {
         if (collision.CompareTag("Player") && attackCollider.enabled)
         {
-            StartAttack(collision);
+            AttackPlayer(collision);
         }
     }
 

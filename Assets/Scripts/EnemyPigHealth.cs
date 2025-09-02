@@ -32,25 +32,18 @@ public class EnemyPigHealth : MonoBehaviour
         if (currentHealth <= 0) return; // chết rồi thì thoát khỏi hàm
 
         currentHealth -= damage;
-        //Debug.Log("currentHealth: " + currentHealth);
-
 
         if (currentHealth <= 0)
         {
             Die();
             // Debug.Log("Enemy is dead!");
         }
-        else
-        {
-            animator.SetTrigger("Hit");
-            // Debug.Log("Enemy is Hit!");
-
-            // Truy cập Controller và bật knockback
-            // EnemyPigController controller = GetComponent<EnemyPigController>();
-            // controller.isKnockBack = true;
-            if (controller != null)                
-                controller.KnockBack(attacker);
-        }
+        // else
+        // {
+        //     animator.SetTrigger("Hit");            
+        //     if (controller != null)                
+        //         controller.KnockBack(attacker);
+        // }
     }
 
     void Die()
