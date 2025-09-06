@@ -19,11 +19,6 @@ public class PlayerRespawn : MonoBehaviour
         respawnPoint = transform.position;
     }
 
-    // void Start()
-    // {
-    //     // Khi game bắt đầu, vị trí ban đầu của Player là respawn mặc định
-    //     respawnPoint = transform.position;
-    // }
 
     public void UpdateCheckPoint(Vector2 newPoint)
     {
@@ -34,7 +29,7 @@ public class PlayerRespawn : MonoBehaviour
     public void SetCheckPoint(Vector3 position)
     {
         respawnPoint = position;
-        Debug.Log("Respawn point set to: " + position);
+        
     }
 
     // Hàm này gọi khi Player chết

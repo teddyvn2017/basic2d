@@ -9,7 +9,7 @@ public class EnemyPigAttack : MonoBehaviour
     [Header("Attack Settings")]
     public int attackDamage = 1;
     public float attackRange = 0.5f;  // khoảng cách để tấn công, tầm đánh (mở rộng xung quanh attackPoint)
-    public float attackCooldown = 1.5f; // Thời gian giữa các đòn tần công
+    public float attackCooldown = 2f; // Thời gian giữa các đòn tần công
     public Collider2D attackCollider;
 
     [HideInInspector]

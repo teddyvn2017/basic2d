@@ -8,6 +8,12 @@ public class PlayerAttack : MonoBehaviour
     public Collider2D attackCollider; // collider vùng đánh
     private Animator animator;
 
+    public float attackRange = 1f;
+
+    public LayerMask enemyLayers;// nhớ chọn layer enemy ở inspector
+
+    public Transform attackPoint;
+
     void Awake()
     {
         instance = this; // gán instance khi Player xuất hiện
@@ -21,10 +27,17 @@ public class PlayerAttack : MonoBehaviour
 
     void Update()
     {
+        // Bật / tắt collider vùng đánh, theo phương pháp animation event
+        // if (Input.GetKeyDown(attackKey))
+        // {
+        //     Attack();
+        // }
+
         if (Input.GetKeyDown(attackKey))
         {
-            Attack();
+            AttackEnemy();
         }
+
     }
 
     void Attack()
@@ -58,19 +71,54 @@ public class PlayerAttack : MonoBehaviour
             }
         }
     }
-    
-    public void AttackEnemy(Collider2D other)
+
+
+    // Dùng Animation Event để bật collider đúng frame đánh
+    // public void AttackEnemy(Collider2D other)
+    // {
+
+    //     if (attackCollider == null || !attackCollider.enabled) return;
+
+    //     EnemyPigHealth enemyHealth = other.GetComponent<EnemyPigHealth>();
+    //     EnemyPigController enemyPigController = other.GetComponent<EnemyPigController>();
+
+    //     if (enemyHealth != null)
+    //         enemyHealth.TakeDamage(attackDamage);
+
+    //     if (enemyPigController != null)
+    //         enemyPigController.KnockBack(transform);
+    // }
+
+    public void AttackEnemy()
     {
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            Debug.Log("Attack enemy");
+            EnemyPigHealth enemyHealth = enemy.GetComponent<EnemyPigHealth>();
+            EnemyPigController enemyPigController = enemy.GetComponent<EnemyPigController>();
 
-        if (attackCollider == null || !attackCollider.enabled) return;
+            if (enemyHealth != null)
+                enemyHealth.TakeDamage(attackDamage);
 
-        EnemyPigHealth enemyHealth = other.GetComponent<EnemyPigHealth>();
-        EnemyPigController enemyPigController = other.GetComponent<EnemyPigController>();
+            if (enemyPigController != null)
+                enemyPigController.KnockBack(transform);
+        }
+    }
 
-        if (enemyHealth != null)
-            enemyHealth.TakeDamage(attackDamage);
+    // Debug: vẽ vùng attack trong Scene
+    // void OnDrawGizmosSelected()
+    // {
+    //     if (attackCollider == null) return;
+    //     Gizmos.color = Color.red;
+    //     Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    // }
+    
+    private void OnDrawGizmos()
+    {
+        if (attackPoint == null) return;
 
-        if (enemyPigController != null)
-            enemyPigController.KnockBack(transform);       
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 }
