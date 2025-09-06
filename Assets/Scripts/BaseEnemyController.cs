@@ -8,11 +8,12 @@ public class BaseEnemyController : MonoBehaviour
     protected Animator animator;
     public float moveSpeed = 1.2f;
     public int health = 2;
-    protected bool isFacingRight = true;
+
+    //con heo đang hướng mặt sang phải nên giá trị = false
+    protected bool isFacingRight = false; 
     protected bool isMoving = true;
 
     [Header("Knockback Settings")]
-
     public float knockbackForce = 1.5f;
     public float knockbackUpForce = 2f;
     public float knockbackDuration = 0.6f;
@@ -45,6 +46,7 @@ public class BaseEnemyController : MonoBehaviour
     protected virtual void Move()
     {
         float horizontal = isFacingRight ? 1f : -1f;
+        Debug.Log(horizontal);  
         transform.position += new Vector3(horizontal, 0, 0) * moveSpeed * Time.deltaTime;
 
         if (animator != null)
@@ -64,6 +66,7 @@ public class BaseEnemyController : MonoBehaviour
     {
         if (isKnockBack) return;
 
+        isKnockBack = true;
         animator.SetTrigger("Hit");
 
         // Xác định hướng knockback

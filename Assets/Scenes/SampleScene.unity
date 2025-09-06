@@ -2528,6 +2528,10 @@ PrefabInstance:
       propertyPath: knockbackForce
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1694704949042218193, guid: 307cdb8a076399b41878644e91785b50, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.47
+      objectReference: {fileID: 0}
     - target: {fileID: 2517256735789424100, guid: 307cdb8a076399b41878644e91785b50, type: 3}
       propertyPath: m_Layer
       value: 0
