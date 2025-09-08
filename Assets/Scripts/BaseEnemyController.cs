@@ -22,14 +22,14 @@ public class BaseEnemyController : MonoBehaviour
 
 
     [Header("Movement Routine Settings")]
-     private float moveDuration = 3f;  // thời gian chạy
+    private float moveDuration = 3f;  // thời gian chạy
     private float idleDuration = 1.5f;  // thời gian nghỉ
 
 
     [Header("Ground Check")]
     public Transform groundCheck;          // Empty Object dưới chân Enemy  
     public LayerMask groundLayer;
-    public float groundCheckRadius = 0.5f;        
+    public float groundCheckRadius = 0.5f;
 
     private bool playerInRange = false;
 
@@ -38,6 +38,9 @@ public class BaseEnemyController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         rb.freezeRotation = true; //ngăn con heo bị lộn ngược
+
+        // Bắt đầu Coroutine tuần tra
+        StartCoroutine(MoveRoutine());
     }
     protected virtual void Update()
     {
@@ -64,13 +67,13 @@ public class BaseEnemyController : MonoBehaviour
 
     protected virtual void Move()
     {
-                
+
         if (!isMoving)
         {
             StopMovement();
             return;
         }
-        
+
         float direction = isFacingRight ? 1f : -1f;
         rb.linearVelocity = new Vector2(direction * moveSpeed, rb.linearVelocity.y);
         animator?.SetBool("isRunning", true);
@@ -82,9 +85,9 @@ public class BaseEnemyController : MonoBehaviour
         Vector3 scale = transform.localScale;
         scale.x *= -1;
         transform.localScale = scale;
-        
+
     }
-    
+
     private IEnumerator MoveRoutine()
     {
         while (true)
@@ -103,11 +106,11 @@ public class BaseEnemyController : MonoBehaviour
         // lấy vị trị của ground check
         Vector2 checkPos = groundCheck.position;
         checkPos.x += isFacingRight ? 0.5f : -0.5f; //tăng khoảng cách kiểm tra phía trước 0.5f theo hướng chạy    
-        bool noGroundAhead = !Physics2D.OverlapCircle(checkPos, groundCheckRadius, groundLayer);                
-        return noGroundAhead;        
+        bool noGroundAhead = !Physics2D.OverlapCircle(checkPos, groundCheckRadius, groundLayer);
+        return noGroundAhead;
     }
 
-   
+
     // public virtual void KnockBack(Transform attacker = null)
     // {
     //     // Dừng Coroutine cũ để tránh lỗi timing
@@ -140,11 +143,11 @@ public class BaseEnemyController : MonoBehaviour
     {
         isKnockBack = false;
     }
-    
+
     private IEnumerator KnockBackCoroutine(Transform attacker)
     {
         // Kiểm tra an toàn để tránh lỗi NullReferenceException
-        if (rb == null || attacker == null) 
+        if (rb == null || attacker == null)
         {
             isKnockBack = false;
             yield break;
@@ -161,7 +164,7 @@ public class BaseEnemyController : MonoBehaviour
 
         // Tạo vector lực đẩy
         Vector2 knockbackDir = new Vector2(horizontalDir * knockbackForce, knockbackUpForce);
-        
+
         // Áp dụng lực
         rb.AddForce(knockbackDir, ForceMode2D.Impulse);
 
@@ -170,6 +173,6 @@ public class BaseEnemyController : MonoBehaviour
 
         // Kết thúc knockback, cho phép enemy di chuyển lại
         isKnockBack = false;
-        
-    }
+
+    }    
 }
