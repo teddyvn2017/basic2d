@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyPigHealth : MonoBehaviour
 {
-    public int maxHealth = 3;
+    public int maxHealth = 2;
     private int currentHealth;
     private Animator animator;
     public float deathDelay = 0.5f;
@@ -29,14 +29,19 @@ public class EnemyPigHealth : MonoBehaviour
 
     public void TakeDamage(int damage, Transform attacker = null)
     {
-        if (currentHealth <= 0) return; // chết rồi thì thoát khỏi hàm
+        // if (currentHealth <= 0) return; // chết rồi thì thoát khỏi hàm
 
-        currentHealth -= damage;
+        
 
         if (currentHealth <= 0)
         {
             Die();
             // Debug.Log("Enemy is dead!");
+        }
+
+        else
+        {
+            currentHealth -= damage;    
         }
         // else
         // {

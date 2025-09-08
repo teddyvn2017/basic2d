@@ -94,7 +94,7 @@ public class PlayerAttack : MonoBehaviour
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
         foreach (Collider2D enemy in hitEnemies)
         {
-            Debug.Log("Attack enemy");
+            // Debug.Log("Attack enemy");
             EnemyPigHealth enemyHealth = enemy.GetComponent<EnemyPigHealth>();
             EnemyPigController enemyPigController = enemy.GetComponent<EnemyPigController>();
 
@@ -102,7 +102,8 @@ public class PlayerAttack : MonoBehaviour
                 enemyHealth.TakeDamage(attackDamage);
 
             if (enemyPigController != null)
-                enemyPigController.KnockBack(transform);
+                // enemyPigController.KnockBack(transform);
+                Debug.Log("Attack enemy");
         }
     }
 
@@ -114,11 +115,11 @@ public class PlayerAttack : MonoBehaviour
     //     Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     // }
     
-    private void OnDrawGizmos()
-    {
-        if (attackPoint == null) return;
+    // private void OnDrawGizmos()
+    // {
+    //     if (attackPoint == null) return;
 
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    }
+    //     Gizmos.color = Color.red;
+    //     Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    // }
 }
