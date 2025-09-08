@@ -16,8 +16,8 @@ public class BaseEnemyController : MonoBehaviour
 
     [Header("Knockback Settings")]
     public float knockbackForce = 0.5f;
-    public float knockbackUpForce = 0.4f;
-    public float knockbackDuration = 0.5f;
+    public float knockbackUpForce = 1f;
+    public float knockbackDuration = 1f;
     protected bool isKnockBack = false;
 
 
@@ -107,6 +107,7 @@ public class BaseEnemyController : MonoBehaviour
         Vector2 checkPos = groundCheck.position;
         checkPos.x += isFacingRight ? 0.5f : -0.5f; //tăng khoảng cách kiểm tra phía trước 0.5f theo hướng chạy    
         bool noGroundAhead = !Physics2D.OverlapCircle(checkPos, groundCheckRadius, groundLayer);
+
         return noGroundAhead;
     }
 
@@ -122,22 +123,22 @@ public class BaseEnemyController : MonoBehaviour
 
     // cho class con hoặc bên ngoài gọi (vd Player đánh enemy)
     // transfrom từ player => attacker
-    // public virtual void KnockBack(Transform attacker = null)
-    // {
-    //     if (isKnockBack) return;
+    public virtual void KnockBack(Transform attacker = null)
+    {
+        if (isKnockBack) return;
 
-    //     isKnockBack = true;
-    //     animator.SetTrigger("Hit");
+        isKnockBack = true;
+        animator.SetTrigger("Hit");
 
-    //     // Xác định hướng knockback
-    //     float horizontalDir = (transform.position.x < attacker.position.x) ? -1f : 1f;
-    //     // Reset vận tốc trước khi AddForce       
-    //     rb.linearVelocity = Vector2.zero;
-    //     Vector2 knockbackDir = new Vector2(horizontalDir * knockbackForce, knockbackUpForce);
-    //     // Debug.Log("knockbackDir x: " + knockbackDir.x + " knockbackDir y: " + knockbackDir.y);
-    //     rb.AddForce(knockbackDir, ForceMode2D.Impulse);
-    //     Invoke(nameof(EndKnockback), knockbackDuration);
-    // }
+        // Xác định hướng knockback
+        float horizontalDir = (transform.position.x < attacker.position.x) ? -1f : 1f;
+        // Reset vận tốc trước khi AddForce       
+        rb.linearVelocity = Vector2.zero;
+        Vector2 knockbackDir = new Vector2(horizontalDir * knockbackForce, knockbackUpForce);
+        // Debug.Log("knockbackDir x: " + knockbackDir.x + " knockbackDir y: " + knockbackDir.y);
+        rb.AddForce(knockbackDir, ForceMode2D.Impulse);
+        Invoke(nameof(EndKnockback), knockbackDuration);
+    }
 
     protected void EndKnockback()
     {

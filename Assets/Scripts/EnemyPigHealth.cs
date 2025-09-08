@@ -1,3 +1,5 @@
+using System.Collections;
+// using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class EnemyPigHealth : MonoBehaviour
@@ -55,19 +57,8 @@ public class EnemyPigHealth : MonoBehaviour
     {
 
         // animator?.SetBool("isRunning", false);
-        animator?.SetTrigger("Death");
-
-        // Tắt tất cả collider để con heo không còn va chạm
-        foreach (Collider2D col in GetComponents<Collider2D>())
-            col.enabled = false;
-
-        // Dừng mọi chuyển động
-        Rigidbody2D rb = GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            rb.linearVelocity = Vector2.zero;
-            rb.gravityScale = 0f;
-        }
+        animator?.SetTrigger("Death");        
+        // rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 
         Destroy(gameObject, deathDelay);
     }

@@ -2380,7 +2380,7 @@ MonoBehaviour:
     m_Bits: 8
   knockbackForce: 0.5
   knockbackDuration: 0.5
-  knockbackUpForce: 0.4
+  knockbackUpForce: 1
   isKnockBack: 0
 --- !u!50 &1329162225
 Rigidbody2D:
@@ -2731,9 +2731,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 1.2
-  knockbackForce: 0.5
-  knockbackUpForce: 0.4
-  knockbackDuration: 0.5
+  knockbackForce: 1
+  knockbackUpForce: 1.5
+  knockbackDuration: 1
   groundCheck: {fileID: 930930606}
   groundLayer:
     serializedVersion: 2

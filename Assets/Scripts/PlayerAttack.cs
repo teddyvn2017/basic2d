@@ -102,8 +102,8 @@ public class PlayerAttack : MonoBehaviour
                 enemyHealth.TakeDamage(attackDamage);
 
             if (enemyPigController != null)
-                // enemyPigController.KnockBack(transform);
-                Debug.Log("Attack enemy");
+                enemyPigController.KnockBack(transform);
+                // Debug.Log("Attack enemy");
         }
     }
 
