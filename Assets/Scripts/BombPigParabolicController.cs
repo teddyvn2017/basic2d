@@ -81,14 +81,17 @@ public class BombPigParabolicController : BaseEnemyController
         // Hủy quả bom sau lifeTime giây để tránh tạo ra quá nhiều instance
         Destroy(bombInstance, lifeTime);
 
+        //Lấy animation ngòi nổ
+        Animator anim = bombInstance.GetComponent<Animator>();
+        anim.Play("Bomb_Fuse");
+
         // Lấy Rigidbody2D của quả bom để ném nó
         Rigidbody2D rb = bombInstance.GetComponent<Rigidbody2D>();
 
         // Ném quả bom
-        Vector2 throwVelocity = CalculateThrow(targetPos, throwPoint.position);
-        // Debug.Log($"Distance: {target - start}, Velocity: {v}");
+        Vector2 throwVelocity = CalculateThrow(targetPos, throwPoint.position);       
         rb.linearVelocity = throwVelocity;
-        // Debug.Log("Throw bomb: X=" + throwVelocity.x + " Y=" + throwVelocity.y);
+       
     }
     
    
@@ -108,41 +111,38 @@ public class BombPigParabolicController : BaseEnemyController
     {
         if (other.CompareTag("Player"))
         {
-            // hasDetectedPlayer = false;
             lastKnownPlayerPos = Vector2.zero;
-            // Debug.Log("isPlayerInDetectZone: " + isPlayerInDetectZone);
-            //playerTransform = null;
         }
     }
 
     // Vẽ quỹ đạo trong Scene view
-    private void OnDrawGizmos()
-    {
-        // Tính vận tốc ban đầu
-        Vector2 velocity = CalculateThrow(endPoint, startPoint);
-        Vector2 currentPos = startPoint;
+    // private void OnDrawGizmos()
+    // {
+    //     // Tính vận tốc ban đầu
+    //     Vector2 velocity = CalculateThrow(endPoint, startPoint);
+    //     Vector2 currentPos = startPoint;
 
-        Gizmos.color = Color.red;
-        Vector2 gravity = Physics2D.gravity;
+    //     Gizmos.color = Color.red;
+    //     Vector2 gravity = Physics2D.gravity;
 
-        int steps = 30;
-        float timestep = timeToTarget / steps;
+    //     int steps = 30;
+    //     float timestep = timeToTarget / steps;
 
-        for (int i = 0; i < steps; i++)
-        {
-            Vector2 nextPos = currentPos + velocity * timestep + 0.5f * gravity * timestep * timestep;
-            velocity += gravity * timestep;
+    //     for (int i = 0; i < steps; i++)
+    //     {
+    //         Vector2 nextPos = currentPos + velocity * timestep + 0.5f * gravity * timestep * timestep;
+    //         velocity += gravity * timestep;
 
-            Gizmos.DrawLine(currentPos, nextPos);
-            currentPos = nextPos;
-        }
+    //         Gizmos.DrawLine(currentPos, nextPos);
+    //         currentPos = nextPos;
+    //     }
 
-        // Vẽ chấm xanh tại điểm bắt đầu và kết thúc
-        Gizmos.color = Color.green;
-        Gizmos.DrawSphere(startPoint, 0.05f);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawSphere(endPoint, 0.05f);
-    }
+    //     // Vẽ chấm xanh tại điểm bắt đầu và kết thúc
+    //     Gizmos.color = Color.green;
+    //     Gizmos.DrawSphere(startPoint, 0.05f);
+    //     Gizmos.color = Color.blue;
+    //     Gizmos.DrawSphere(endPoint, 0.05f);
+    // }
 
     /// <summary>
     /// Tính vận tốc ban đầu để ném vật từ start -> target trong đúng timeToTarget giây.
