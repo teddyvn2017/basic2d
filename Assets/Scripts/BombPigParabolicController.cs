@@ -45,24 +45,17 @@ public class BombPigParabolicController : BaseEnemyController
     protected override void Update()
     {
         base.Update();
-
-        // if (hasDetectedPlayer && Time.time > lastThrowTime + throwCooldown)
-        // {
-
-        //     Debug.Log("Player is detected by enemy bomb pig !");
-        //     lastThrowTime = Time.time;
-        //     ThrowBomb(lastKnownPlayerPos);        
-        // }
+       
         if (hasDetectedPlayer)
         {
             // Cập nhật vị trí của người chơi liên tục khi đã phát hiện
             lastKnownPlayerPos = playerTransform.position;
-            // cách bên dưới là không chính xác
+            // cách bên dưới chạy không ra kết quả
             // lastKnownPlayerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
             // Debug.Log("lastKnownPlayerPos: " + lastKnownPlayerPos.x + " " + lastKnownPlayerPos.y);
             if (Time.time > lastThrowTime + throwCooldown)
             {
-                Debug.Log("Player is detected by enemy bomb pig!");
+                // Debug.Log("Player is detected by enemy bomb pig!");
                 lastThrowTime = Time.time;
                 ThrowBomb(lastKnownPlayerPos);
             }

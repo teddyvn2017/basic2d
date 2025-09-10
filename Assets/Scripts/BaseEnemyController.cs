@@ -25,22 +25,26 @@ public class BaseEnemyController : MonoBehaviour
     private float moveDuration = 3f;  // thời gian chạy
     private float idleDuration = 1.5f;  // thời gian nghỉ
 
-
     [Header("Ground Check")]
     public Transform groundCheck;          // Empty Object dưới chân Enemy  
     public LayerMask groundLayer;
     public float groundCheckRadius = 0.5f;
 
     private bool playerInRange = false;
+    // Các biến mới để lưu trữ thời gian ngẫu nhiên
+    protected float randomMoveDuration;
+    protected float randomIdleDuration;
 
     protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         rb.freezeRotation = true; //ngăn con heo bị lộn ngược
-
+        // Gán giá trị ngẫu nhiên cho mỗi kẻ địch
+        randomMoveDuration = Random.Range(2f, 4f); // Ví dụ: di chuyển ngẫu nhiên từ 2 đến 4 giây
+        randomIdleDuration = Random.Range(1f, 2f);  // Ví dụ: nghỉ ngẫu nhiên từ 1 đến 2 giây
         // Bắt đầu Coroutine tuần tra
-        StartCoroutine(MoveRoutine());
+        StartCoroutine(nameof(MoveRoutine),Random.Range(0f, 1.5f));
     }
     protected virtual void Update()
     {
@@ -55,7 +59,6 @@ public class BaseEnemyController : MonoBehaviour
         if (CheckGroundAhead())
             Flip();
 
-        // CheckGroundAhead();
         Move();
     }
 
@@ -94,10 +97,10 @@ public class BaseEnemyController : MonoBehaviour
         {
             // chạy
             isMoving = true;
-            yield return new WaitForSeconds(moveDuration);
+            yield return new WaitForSeconds(randomMoveDuration);
             // nghỉ
             isMoving = false;
-            yield return new WaitForSeconds(idleDuration);
+            yield return new WaitForSeconds(randomIdleDuration);
         }
     }
 
