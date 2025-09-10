@@ -17,7 +17,7 @@ public class BaseEnemyController : MonoBehaviour
     [Header("Knockback Settings")]
     public float knockbackForce = 0.5f;
     public float knockbackUpForce = 1f;
-    public float knockbackDuration = 1f;
+    public float knockbackDuration = 1f;// phải tăng cao 1 tí để đủ thời gian knockback
     protected bool isKnockBack = false;
 
 

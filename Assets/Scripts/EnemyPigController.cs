@@ -12,8 +12,7 @@ public class EnemyPigController : BaseEnemyController
 
     protected override void Update()
     {
-        base.Update();
-        // CheckGroundAhead();
+        base.Update();       
     }
     
 }
