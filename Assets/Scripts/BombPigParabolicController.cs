@@ -8,7 +8,7 @@ public class BombPigParabolicController : BaseEnemyController
     // public int damage = 1;                 // Sát thương
     // public GameObject explosionEffect;      // Prefab hiệu ứng nổ
 
-    public float lifeTime = 5f;
+    public float lifeTime = 4f;
 
     //Dùng để lưu trữ vị trí ném bom
     public Transform throwPoint;
@@ -20,19 +20,15 @@ public class BombPigParabolicController : BaseEnemyController
     public GameObject bombPrefab;
 
     public float timeToTarget = 3f; // bom bay trong 1 giây
-    // Biến trạng thái để kiểm tra xem người chơi có trong vùng không
-    
+                                    // Biến trạng thái để kiểm tra xem người chơi có trong vùng không
+
     // Dùng để ngăn ném bom liên tục
     private float lastThrowTime;
     public float throwCooldown = 2f;
 
-    public int resolution = 30;
-    
     public Transform playerTransform;
 
-    [SerializeField] private Vector2 startPoint = new Vector2(0.8f, -0.2f);
-    [SerializeField] private Vector2 endPoint = new Vector2(4.48f, 0.96f);
-    // [SerializeField] private float timeToTarget = 1.2f;
+    // private BombTrajectory bombTrajectory;
 
     private Vector2 lastKnownPlayerPos;
     private bool hasDetectedPlayer = false;
@@ -45,7 +41,7 @@ public class BombPigParabolicController : BaseEnemyController
     protected override void Update()
     {
         base.Update();
-       
+
         if (hasDetectedPlayer)
         {
             // Cập nhật vị trí của người chơi liên tục khi đã phát hiện
@@ -57,19 +53,10 @@ public class BombPigParabolicController : BaseEnemyController
             {
                 // Debug.Log("Player is detected by enemy bomb pig!");
                 lastThrowTime = Time.time;
-                ThrowBomb(lastKnownPlayerPos);
+               // ThrowBomb(lastKnownPlayerPos);
             }
         }
     }
-
-    // private void OnCollisionEnter2D(Collision2D collision)
-    // {
-    //     if (collision.gameObject.CompareTag("Ground"))
-    //     {
-    //         Debug.Log("💥 Bom đã nổ khi chạm đất!");
-    //         Destroy(gameObject);
-    //     }
-    // }
 
     private void ThrowBomb(Vector2 targetPos)
     {
@@ -81,7 +68,7 @@ public class BombPigParabolicController : BaseEnemyController
         // Hủy quả bom sau lifeTime giây để tránh tạo ra quá nhiều instance
         Destroy(bombInstance, lifeTime);
 
-        //Lấy animation ngòi nổ
+        //Lấy animation có ngòi nổ
         Animator anim = bombInstance.GetComponent<Animator>();
         anim.Play("Bomb_Fuse");
 
@@ -89,19 +76,29 @@ public class BombPigParabolicController : BaseEnemyController
         Rigidbody2D rb = bombInstance.GetComponent<Rigidbody2D>();
 
         // Ném quả bom
-        Vector2 throwVelocity = CalculateThrow(targetPos, throwPoint.position);       
+        Vector2 throwVelocity = CalculateThrow(targetPos, throwPoint.position);        
         rb.linearVelocity = throwVelocity;
-       
+
     }
-    
-   
-   
+
+    public Vector2 CalculateThrow(Vector2 target, Vector2 start)
+    {
+        Vector2 distance = target - start;
+        Vector2 gravity = Physics2D.gravity;
+
+        float vx = distance.x / timeToTarget;
+        float vy = (distance.y - 0.5f * gravity.y * timeToTarget * timeToTarget) / timeToTarget;
+
+        return new Vector2(vx, vy);
+    }
+
+
     private void OnTriggerEnter2D(Collider2D other)
     {
 
         if (other != null && other.CompareTag("Player"))
         {
-
+            
             // lastKnownPlayerPos = other.transform.position;
             hasDetectedPlayer = true;
         }
@@ -114,60 +111,4 @@ public class BombPigParabolicController : BaseEnemyController
             lastKnownPlayerPos = Vector2.zero;
         }
     }
-
-    // Vẽ quỹ đạo trong Scene view
-    // private void OnDrawGizmos()
-    // {
-    //     // Tính vận tốc ban đầu
-    //     Vector2 velocity = CalculateThrow(endPoint, startPoint);
-    //     Vector2 currentPos = startPoint;
-
-    //     Gizmos.color = Color.red;
-    //     Vector2 gravity = Physics2D.gravity;
-
-    //     int steps = 30;
-    //     float timestep = timeToTarget / steps;
-
-    //     for (int i = 0; i < steps; i++)
-    //     {
-    //         Vector2 nextPos = currentPos + velocity * timestep + 0.5f * gravity * timestep * timestep;
-    //         velocity += gravity * timestep;
-
-    //         Gizmos.DrawLine(currentPos, nextPos);
-    //         currentPos = nextPos;
-    //     }
-
-    //     // Vẽ chấm xanh tại điểm bắt đầu và kết thúc
-    //     Gizmos.color = Color.green;
-    //     Gizmos.DrawSphere(startPoint, 0.05f);
-    //     Gizmos.color = Color.blue;
-    //     Gizmos.DrawSphere(endPoint, 0.05f);
-    // }
-
-    /// <summary>
-    /// Tính vận tốc ban đầu để ném vật từ start -> target trong đúng timeToTarget giây.
-    /// </summary>
-    private Vector2 CalculateThrow(Vector2 target, Vector2 start)
-    {
-        Vector2 distance = target - start;
-        Vector2 gravity = Physics2D.gravity;
-
-        float vx = distance.x / timeToTarget;
-        float vy = (distance.y - 0.5f * gravity.y * timeToTarget * timeToTarget) / timeToTarget;
-
-        return new Vector2(vx, vy);
-    }
-
-
 }
-
-// Kiến thức
-//Trong cơ học, tọa độ theo trục Y của một vật ném xiên được tính theo công thức
-//y = y0 + v0 * t + 0.5 * g * t^2
-//trong đó
-//y0 = y điểm bắt đầu ném
-//v0 = vận tốc ban đầu
-//g = Gravity (Physics2D.gravity.y * rb.gravityScale) trọng lực
-//t = thời gian ném
-//y(t)=y0​+vy​⋅t+1/2​gt^2
-//target.y=start.y+vy​⋅timeToTarget+1/2​g⋅(timeToTarget)^2
