@@ -72,7 +72,7 @@ public class EnemyPigAttack : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
 
-        if (collision.CompareTag("Player"))
+        if (collision != null && collision.CompareTag("Player"))
         {
             Debug.Log("Player đã rời khỏi phạm vi tấn công!");
             playerInRange = false;

@@ -15,9 +15,9 @@ public class BaseEnemyController : MonoBehaviour
     protected bool isMoving = true;
 
     [Header("Knockback Settings")]
-    public float knockbackForce = 0.5f;
-    public float knockbackUpForce = 1f;
-    public float knockbackDuration = 1f;// phải tăng cao 1 tí để đủ thời gian knockback
+    public float knockbackForce = 2f;
+    public float knockbackUpForce = 2f;
+    public float knockbackDuration = 0.3f;// phải tăng cao 1 tí để đủ thời gian knockback
     protected bool isKnockBack = false;
 
 
@@ -126,6 +126,7 @@ public class BaseEnemyController : MonoBehaviour
 
     // cho class con hoặc bên ngoài gọi (vd Player đánh enemy)
     // transfrom từ player => attacker
+
     public virtual void KnockBack(Transform attacker = null)
     {
         if (isKnockBack) return;
@@ -142,6 +143,34 @@ public class BaseEnemyController : MonoBehaviour
         rb.AddForce(knockbackDir, ForceMode2D.Impulse);
         Invoke(nameof(EndKnockback), knockbackDuration);
     }
+
+    // public virtual IEnumerator KnockBack(Transform attacker = null)
+    // {
+    //     if (isKnockBack) yield break; // Nếu đang knockback thì thoát
+
+    //     isKnockBack = true;
+    //     animator.SetTrigger("Hit");
+
+    //     // Dừng các Coroutine di chuyển để enemy không di chuyển trong khi bị knockback
+    //     StopAllCoroutines();
+
+    //     // Xác định hướng knockback
+    //     float horizontalDir = (transform.position.x < attacker.position.x) ? -1f : 1f;
+    //     rb.linearVelocity = Vector2.zero; // Reset vận tốc
+    //     Vector2 knockbackDir = new Vector2(horizontalDir * knockbackForce, knockbackUpForce);
+    //     rb.AddForce(knockbackDir, ForceMode2D.Impulse);
+
+    //     // Chờ trong thời gian knockbackDuration
+    //     yield return new WaitForSeconds(knockbackDuration);
+
+    //     // Đảm bảo velocity về 0 sau khi knockback
+    //     rb.linearVelocity = Vector2.zero;
+
+    //     isKnockBack = false;
+
+    //     // Bắt đầu lại Coroutine di chuyển sau khi knockback kết thúc
+    //     StartCoroutine("MoveRoutine");
+    // }
 
     protected void EndKnockback()
     {

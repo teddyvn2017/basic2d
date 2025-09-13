@@ -18,7 +18,6 @@ public class EnemyPigHealth : MonoBehaviour
     private Rigidbody2D rb;
 
 
-
     void Start()
     {
         currentHealth = maxHealth;
@@ -33,8 +32,6 @@ public class EnemyPigHealth : MonoBehaviour
     {
         // if (currentHealth <= 0) return; // chết rồi thì thoát khỏi hàm
 
-        
-
         if (currentHealth <= 0)
         {
             Die();
@@ -45,12 +42,7 @@ public class EnemyPigHealth : MonoBehaviour
         {
             currentHealth -= damage;    
         }
-        // else
-        // {
-        //     animator.SetTrigger("Hit");            
-        //     if (controller != null)                
-        //         controller.KnockBack(attacker);
-        // }
+    
     }
 
     void Die()
@@ -61,9 +53,5 @@ public class EnemyPigHealth : MonoBehaviour
         // rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
 
         Destroy(gameObject, deathDelay);
-    }
-
-    
-
-    
+    }    
 }
