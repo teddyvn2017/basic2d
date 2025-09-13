@@ -8,7 +8,7 @@ public class BombPigParabolicController : BaseEnemyController
     // public int damage = 1;                 // Sát thương
     // public GameObject explosionEffect;      // Prefab hiệu ứng nổ
 
-    public float lifeTime = 4f;
+    public float lifeTime = 2f;
 
     //Dùng để lưu trữ vị trí ném bom
     public Transform throwPoint;
@@ -24,7 +24,7 @@ public class BombPigParabolicController : BaseEnemyController
 
     // Dùng để ngăn ném bom liên tục
     private float lastThrowTime;
-    public float throwCooldown = 2f;
+    public float throwCooldown = 3f;
 
     public Transform playerTransform;
 
@@ -46,6 +46,7 @@ public class BombPigParabolicController : BaseEnemyController
         {
             // Cập nhật vị trí của người chơi liên tục khi đã phát hiện
             lastKnownPlayerPos = playerTransform.position;
+            // lastKnownPlayerPos.y += 1f;    
             // cách bên dưới chạy không ra kết quả
             // lastKnownPlayerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
             // Debug.Log("lastKnownPlayerPos: " + lastKnownPlayerPos.x + " " + lastKnownPlayerPos.y);
@@ -53,7 +54,7 @@ public class BombPigParabolicController : BaseEnemyController
             {
                 // Debug.Log("Player is detected by enemy bomb pig!");
                 lastThrowTime = Time.time;
-               // ThrowBomb(lastKnownPlayerPos);
+                ThrowBomb(lastKnownPlayerPos);
             }
         }
     }
@@ -76,7 +77,8 @@ public class BombPigParabolicController : BaseEnemyController
         Rigidbody2D rb = bombInstance.GetComponent<Rigidbody2D>();
 
         // Ném quả bom
-        Vector2 throwVelocity = CalculateThrow(targetPos, throwPoint.position);        
+        Vector2 throwVelocity = CalculateThrow(targetPos, throwPoint.position);
+        // Debug.Log("ThrowVelocity: " + throwVelocity.x + " " + throwVelocity.y);
         rb.linearVelocity = throwVelocity;
 
     }

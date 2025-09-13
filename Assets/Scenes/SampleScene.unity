@@ -671,7 +671,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   groundCheckRadius: 0.5
-  lifeTime: 3
+  lifeTime: 1.5
   throwPoint: {fileID: 1346570807}
   throwSpeed: 2
   bombPrefab: {fileID: 8613594387808887523, guid: 9afefc3e8fcb35b4ea30378720bfd789, type: 3}
