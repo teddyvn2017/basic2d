@@ -32,6 +32,7 @@ public class BombPigParabolicController : BaseEnemyController
 
     private Vector2 lastKnownPlayerPos;
     private bool hasDetectedPlayer = false;
+    // private Rigidbody2D rb;
 
     protected override void Start()
     {
@@ -45,11 +46,7 @@ public class BombPigParabolicController : BaseEnemyController
         if (hasDetectedPlayer)
         {
             // Cập nhật vị trí của người chơi liên tục khi đã phát hiện
-            lastKnownPlayerPos = playerTransform.position;
-            // lastKnownPlayerPos.y += 1f;    
-            // cách bên dưới chạy không ra kết quả
-            // lastKnownPlayerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
-            // Debug.Log("lastKnownPlayerPos: " + lastKnownPlayerPos.x + " " + lastKnownPlayerPos.y);
+            lastKnownPlayerPos = playerTransform.position;            
             if (Time.time > lastThrowTime + throwCooldown)
             {
                 // Debug.Log("Player is detected by enemy bomb pig!");
@@ -58,6 +55,15 @@ public class BombPigParabolicController : BaseEnemyController
             }
         }
     }
+
+    // public void ThrowAndRotate(Vector2 target, Vector2 start)
+    // {
+    //     Vector2 throwVelocity = CalculateThrow(target, start);
+    //     // Debug.Log("ThrowVelocity: " + throwVelocity.x + " " + throwVelocity.y);
+    //     rb.linearVelocity = throwVelocity;
+
+    //     rb.angularVelocity = -360f;
+    // }
 
     private void ThrowBomb(Vector2 targetPos)
     {
@@ -78,8 +84,9 @@ public class BombPigParabolicController : BaseEnemyController
 
         // Ném quả bom
         Vector2 throwVelocity = CalculateThrow(targetPos, throwPoint.position);
-        // Debug.Log("ThrowVelocity: " + throwVelocity.x + " " + throwVelocity.y);
+
         rb.linearVelocity = throwVelocity;
+        rb.angularVelocity = -360f;
 
     }
 
