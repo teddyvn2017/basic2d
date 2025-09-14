@@ -1,8 +1,18 @@
 using System.Collections;
 using UnityEngine;
 
+
+
 public class BaseEnemyController : MonoBehaviour
 {
+
+    public enum EnemyState
+    {
+        Idle,
+        Patrol,
+        Attack,
+        Die
+    }
 
     [Header("Enemy Settings")]
     protected Rigidbody2D rb;
@@ -16,7 +26,7 @@ public class BaseEnemyController : MonoBehaviour
 
     [Header("Knockback Settings")]
     public float knockbackForce = 2f;
-    public float knockbackUpForce = 2f;
+    public float knockbackUpForce = 3f;
     public float knockbackDuration = 0.3f;// phải tăng cao 1 tí để đủ thời gian knockback
     protected bool isKnockBack = false;
 
@@ -35,6 +45,8 @@ public class BaseEnemyController : MonoBehaviour
     protected float randomMoveDuration;
     protected float randomIdleDuration;
 
+    public EnemyState currentState = EnemyState.Patrol;
+
     protected virtual void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -44,39 +56,62 @@ public class BaseEnemyController : MonoBehaviour
         randomMoveDuration = Random.Range(2f, 4f); // Ví dụ: di chuyển ngẫu nhiên từ 2 đến 4 giây
         randomIdleDuration = Random.Range(1f, 2f);  // Ví dụ: nghỉ ngẫu nhiên từ 1 đến 2 giây
         // Bắt đầu Coroutine tuần tra
-        StartCoroutine(nameof(MoveRoutine),Random.Range(0f, 1.5f));
+        StartCoroutine(nameof(MoveRoutine), Random.Range(0f, 1.5f));
+        
+        currentState = EnemyState.Patrol; 
     }
     protected virtual void Update()
     {
         if (isKnockBack) return;
+
 
         if (playerInRange)
         {
             Debug.Log("playerInRange: " + playerInRange);
         }
 
-        // Nếu tới mép hố thì quay lại
+        switch (currentState)
+        {
+            case EnemyState.Idle:
+                Idle();
+                break;
+            case EnemyState.Patrol:
+                Patrol();
+                break;
+            case EnemyState.Attack:
+                break;
+            case EnemyState.Die:
+                break;
+        }
+    }
+
+
+    protected virtual void Idle()
+    {
+        animator.SetBool("isRunning", false);
+        rb.linearVelocity = Vector2.zero;
+    }
+
+    protected virtual void Patrol()
+    {
+
         if (CheckGroundAhead())
             Flip();
-
+        //tiếp tục di chuyển
         Move();
     }
 
     protected virtual void StopMovement()
     {
-        rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+        rb.linearVelocity = Vector2.zero;
         animator?.SetBool("isRunning", false);
+        currentState = EnemyState.Idle;
     }
 
     protected virtual void Move()
     {
-
-        if (!isMoving)
-        {
-            StopMovement();
-            return;
-        }
-
+        
+        currentState = EnemyState.Patrol;
         float direction = isFacingRight ? 1f : -1f;
         rb.linearVelocity = new Vector2(direction * moveSpeed, rb.linearVelocity.y);
         animator?.SetBool("isRunning", true);
@@ -95,11 +130,11 @@ public class BaseEnemyController : MonoBehaviour
     {
         while (true)
         {
-            // chạy
-            isMoving = true;
+            // chạy         
+            currentState = EnemyState.Patrol;
             yield return new WaitForSeconds(randomMoveDuration);
             // nghỉ
-            isMoving = false;
+            currentState = EnemyState.Idle;
             yield return new WaitForSeconds(randomIdleDuration);
         }
     }
@@ -142,35 +177,7 @@ public class BaseEnemyController : MonoBehaviour
         // Debug.Log("knockbackDir x: " + knockbackDir.x + " knockbackDir y: " + knockbackDir.y);
         rb.AddForce(knockbackDir, ForceMode2D.Impulse);
         Invoke(nameof(EndKnockback), knockbackDuration);
-    }
-
-    // public virtual IEnumerator KnockBack(Transform attacker = null)
-    // {
-    //     if (isKnockBack) yield break; // Nếu đang knockback thì thoát
-
-    //     isKnockBack = true;
-    //     animator.SetTrigger("Hit");
-
-    //     // Dừng các Coroutine di chuyển để enemy không di chuyển trong khi bị knockback
-    //     StopAllCoroutines();
-
-    //     // Xác định hướng knockback
-    //     float horizontalDir = (transform.position.x < attacker.position.x) ? -1f : 1f;
-    //     rb.linearVelocity = Vector2.zero; // Reset vận tốc
-    //     Vector2 knockbackDir = new Vector2(horizontalDir * knockbackForce, knockbackUpForce);
-    //     rb.AddForce(knockbackDir, ForceMode2D.Impulse);
-
-    //     // Chờ trong thời gian knockbackDuration
-    //     yield return new WaitForSeconds(knockbackDuration);
-
-    //     // Đảm bảo velocity về 0 sau khi knockback
-    //     rb.linearVelocity = Vector2.zero;
-
-    //     isKnockBack = false;
-
-    //     // Bắt đầu lại Coroutine di chuyển sau khi knockback kết thúc
-    //     StartCoroutine("MoveRoutine");
-    // }
+    }    
 
     protected void EndKnockback()
     {
@@ -207,5 +214,5 @@ public class BaseEnemyController : MonoBehaviour
         // Kết thúc knockback, cho phép enemy di chuyển lại
         isKnockBack = false;
 
-    }    
+    }
 }

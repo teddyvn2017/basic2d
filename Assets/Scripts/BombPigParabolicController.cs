@@ -19,20 +19,14 @@ public class BombPigParabolicController : BaseEnemyController
     // Dùng để lưu trữ prefab của quả bom
     public GameObject bombPrefab;
 
-    public float timeToTarget = 3f; // bom bay trong 1 giây
+    public float timeToTarget = 1f; // bom bay trong 1 giây
                                     // Biến trạng thái để kiểm tra xem người chơi có trong vùng không
-
-    // Dùng để ngăn ném bom liên tục
+    
     private float lastThrowTime;
     public float throwCooldown = 3f;
-
     public Transform playerTransform;
-
-    // private BombTrajectory bombTrajectory;
-
     private Vector2 lastKnownPlayerPos;
     private bool hasDetectedPlayer = false;
-    // private Rigidbody2D rb;
 
     protected override void Start()
     {
@@ -49,22 +43,11 @@ public class BombPigParabolicController : BaseEnemyController
             lastKnownPlayerPos = playerTransform.position;            
             if (Time.time > lastThrowTime + throwCooldown)
             {
-                // Debug.Log("Player is detected by enemy bomb pig!");
                 lastThrowTime = Time.time;
                 ThrowBomb(lastKnownPlayerPos);
             }
         }
     }
-
-    // public void ThrowAndRotate(Vector2 target, Vector2 start)
-    // {
-    //     Vector2 throwVelocity = CalculateThrow(target, start);
-    //     // Debug.Log("ThrowVelocity: " + throwVelocity.x + " " + throwVelocity.y);
-    //     rb.linearVelocity = throwVelocity;
-
-    //     rb.angularVelocity = -360f;
-    // }
-
     private void ThrowBomb(Vector2 targetPos)
     {
         // Debug.Log("ThrowBomb");
@@ -107,8 +90,10 @@ public class BombPigParabolicController : BaseEnemyController
 
         if (other != null && other.CompareTag("Player"))
         {
-            
-            // lastKnownPlayerPos = other.transform.position;
+
+            // lastKnownPlayerPos = playerTransform.position;
+            Debug.Log("Player is in range !");
+            // ThrowBomb(lastKnownPlayerPos);
             hasDetectedPlayer = true;
         }
     }
@@ -117,7 +102,9 @@ public class BombPigParabolicController : BaseEnemyController
     {
         if (other.CompareTag("Player"))
         {
-            lastKnownPlayerPos = Vector2.zero;
+            // lastKnownPlayerPos = Vector2.zero;
+            hasDetectedPlayer = false;
+            Debug.Log("Player out of range");
         }
     }
 }
