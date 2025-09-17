@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class BombPigParabolicController : MonoBehaviour
+public class BombPigParabolicController : BaseEnemyController
 {
     [Header("Explosion Settings")]
     public float lifeTime = 2f;
@@ -19,47 +19,71 @@ public class BombPigParabolicController : MonoBehaviour
     public bool hasDetectedPlayer = false;
     private bool canThrow = true;
 
-    void Start()
+    protected override void Start()
     {
-        lastThrowTime = -throwCooldown; // Cho phép ném ngay lần đầu
+        base.Start();
+        // EnemyState = EnemyState.Patrol;
+        lastThrowTime = Time.time;
     }
 
-    void Update()
+    protected override void Update()
     {
 
-        // Debug.Log("hasDetectedPlayer: " + hasDetectedPlayer + "  canThrow: " + canThrow + "  playerTransform: " + playerTransform);
-
+        base.Update();
+        // Debug.Log("hasDetectedPlayer: " + hasDetectedPlayer);
         if (hasDetectedPlayer && canThrow)
         {
-            StartCoroutine(ThrowWithDelay());
+            Attack();
         }
-        // if (hasDetectedPlayer && playerTransform != null)
-        // {
-        //     lastKnownPlayerPos = playerTransform.position;
+        //  Debug.Log("hasDetectedPlayer: " + hasDetectedPlayer);
 
-        //     float remainingCooldown = (lastThrowTime + throwCooldown) - Time.time;
+            // if (hasDetectedPlayer && canThrow)
+            // {
+            //     StartCoroutine(ThrowWithDelay());
+            // }
+            // if (hasDetectedPlayer && playerTransform != null)
+            // {
+            //     lastKnownPlayerPos = playerTransform.position;
 
-        //     if (remainingCooldown > 0f)
-        //     {
-        //         // Luôn log countdown cho đến đúng 0.00
-        //         // Debug.Log("Đang chờ cooldown... còn " + Mathf.Max(remainingCooldown, 0f).ToString("F2") + "s");
-        //         // Debug.Log("Đang chờ cooldown... còn " + remainingCooldown.ToString("F2") + "s");
-        //     }
-        //     else
-        //     {
-        //         Debug.Log("Ném bom!");
-        //         lastThrowTime = Time.time;
-        //         // ThrowBomb(lastKnownPlayerPos);
-        //     }
-        // }
+            //     float remainingCooldown = (lastThrowTime + throwCooldown) - Time.time;
+
+            //     if (remainingCooldown > 0f)
+            //     {
+            //         // Luôn log countdown cho đến đúng 0.00
+            //         // Debug.Log("Đang chờ cooldown... còn " + Mathf.Max(remainingCooldown, 0f).ToString("F2") + "s");
+            //         // Debug.Log("Đang chờ cooldown... còn " + remainingCooldown.ToString("F2") + "s");
+            //     }
+            //     else
+            //     {
+            //         Debug.Log("Ném bom!");
+            //         lastThrowTime = Time.time;
+            //         // ThrowBomb(lastKnownPlayerPos);
+            //     }
+            // }
     }
+    protected override void Attack()
+    {
+        // Quay đầu về phía người chơi 
+        Vector2 directionToPlayer = lastKnownPlayerPos - (Vector2)transform.position;
+        if (directionToPlayer.x > 0 && !isFacingRight)
+            Flip();
+        else if (directionToPlayer.x < 0 && isFacingRight) Flip();
+        // Debug.Log("lastThrowTime: " + lastThrowTime + " throwCooldown: " + throwCooldown);
+        // if (Time.time >= lastThrowTime + throwCooldown)
+        // {
+        //     Debug.Log("NÉM BOM vào " + playerTransform.position);
+        //     lastThrowTime = Time.time;
+        //     // ThrowBomb(playerTarget.position); //  
+        // }
 
+        StartCoroutine(ThrowWithDelay());
+    }
 
     IEnumerator ThrowWithDelay()
     {
         canThrow = false;
-        Debug.Log("Ném bom!");
-        // ThrowBomb(lastKnownPlayerPos);
+        Debug.Log("Ném bom!"+ playerTransform.position.x + " " + playerTransform.position.y);
+        ThrowBomb(playerTransform.position);
         yield return new WaitForSeconds(throwCooldown);
         canThrow = true;
     }
@@ -94,46 +118,13 @@ public class BombPigParabolicController : MonoBehaviour
         return new Vector2(vx, vy);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other != null && other.CompareTag("Player"))
-        {
-            playerTransform = other.transform;
-            lastKnownPlayerPos = other.transform.position;
-            hasDetectedPlayer = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerTransform = null;
-            lastKnownPlayerPos = Vector2.zero;
-            hasDetectedPlayer = false;
-        }
-    }
-
-    // private void OnTriggerStay2D(Collider2D other)
-    // {
-    //     Debug.Log("OnTriggerStay2D is called!");
-    //     // hasDetectedPlayer = true;
-    //     if (other.CompareTag("Player"))
-    //     {
-    //         // Debug.Log("vẫn còn trong vùng!");
-    //         // Debug.Log("playerTransform: " + playerTransform);
-    //         Debug.Log("compare true nằm trong vùng!");
-    //         hasDetectedPlayer = true;
-    //         playerTransform = other.transform;
-    //         lastKnownPlayerPos = other.transform.position;
-    //     }
-    // }
 
     public void OnPlayerDetected(Transform pos)
     {
         hasDetectedPlayer = true;
-        // playerTransform = playerPos;
-        // lastKnownPlayerPos = new Vector2(pos.position.x, pos.position.y); // playerpos;
+        // Change
         playerTransform = pos;
+        Debug.Log("Player detected!");  
+
     }
 }

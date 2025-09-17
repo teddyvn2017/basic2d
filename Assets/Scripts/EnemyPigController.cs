@@ -12,7 +12,7 @@ public class EnemyPigController : BaseEnemyController
 
     protected override void Update()
     {
-        base.Update();       
+        base.Update();
     }
     
 }

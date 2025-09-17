@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
+
+
 public class BaseEnemyController : MonoBehaviour
 {
 
@@ -30,8 +32,8 @@ public class BaseEnemyController : MonoBehaviour
 
 
     [Header("Movement Routine Settings")]
-    private float moveDuration = 3f;  // thời gian chạy
-    private float idleDuration = 1.5f;  // thời gian nghỉ
+    // private float moveDuration = 3f;  // thời gian chạy
+    // private float idleDuration = 1.5f;  // thời gian nghỉ
 
     [Header("Ground Check")]
     public Transform groundCheck;          // Empty Object dưới chân Enemy  
@@ -55,18 +57,18 @@ public class BaseEnemyController : MonoBehaviour
         randomIdleDuration = Random.Range(1f, 2f);  // Ví dụ: nghỉ ngẫu nhiên từ 1 đến 2 giây
         // Bắt đầu Coroutine tuần tra
         StartCoroutine(nameof(MoveRoutine), Random.Range(0f, 1.5f));
-        
-        currentState = EnemyState.Patrol; 
+
+        currentState = EnemyState.Patrol;
     }
     protected virtual void Update()
     {
         if (isKnockBack) return;
 
 
-        if (playerInRange)
-        {
-            Debug.Log("playerInRange: " + playerInRange);
-        }
+        // if (playerInRange)
+        // {
+        //     Debug.Log("playerInRange: " + playerInRange);
+        // }
 
         switch (currentState)
         {
@@ -108,7 +110,7 @@ public class BaseEnemyController : MonoBehaviour
 
     protected virtual void Move()
     {
-        
+
         currentState = EnemyState.Patrol;
         float direction = isFacingRight ? 1f : -1f;
         rb.linearVelocity = new Vector2(direction * moveSpeed, rb.linearVelocity.y);
@@ -148,7 +150,15 @@ public class BaseEnemyController : MonoBehaviour
     }
 
 
-   
+    // public virtual void KnockBack(Transform attacker = null)
+    // {
+    //     // Dừng Coroutine cũ để tránh lỗi timing
+    //     StopAllCoroutines();
+
+    //     // Bắt đầu Coroutine mới
+    //     StartCoroutine(KnockBackCoroutine(attacker));
+    // }
+
     // cho class con hoặc bên ngoài gọi (vd Player đánh enemy)
     // transfrom từ player => attacker
 
@@ -167,7 +177,7 @@ public class BaseEnemyController : MonoBehaviour
         // Debug.Log("knockbackDir x: " + knockbackDir.x + " knockbackDir y: " + knockbackDir.y);
         rb.AddForce(knockbackDir, ForceMode2D.Impulse);
         Invoke(nameof(EndKnockback), knockbackDuration);
-    }    
+    }
 
     protected void EndKnockback()
     {
@@ -204,5 +214,10 @@ public class BaseEnemyController : MonoBehaviour
         // Kết thúc knockback, cho phép enemy di chuyển lại
         isKnockBack = false;
 
+    }
+    
+    protected virtual void Attack()
+    {
+     
     }
 }
