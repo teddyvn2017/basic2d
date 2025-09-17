@@ -1,76 +1,86 @@
+using System.Collections;
 using UnityEngine;
 
-public class BombPigParabolicController : BaseEnemyController
+public class BombPigParabolicController : MonoBehaviour
 {
     [Header("Explosion Settings")]
-    // public float delay = 2f;                // Thời gian nổ sau khi ném
-    // public float explosionRadius = 2f;      // Bán kính nổ
-    // public int damage = 1;                 // Sát thương
-    // public GameObject explosionEffect;      // Prefab hiệu ứng nổ
-
     public float lifeTime = 2f;
-
-    //Dùng để lưu trữ vị trí ném bom
     public Transform throwPoint;
-
-    // Tốc độ ném bom
     public float throwSpeed = 5f;
-
-    // Dùng để lưu trữ prefab của quả bom
     public GameObject bombPrefab;
+    public float timeToTarget = 3f;
 
-    public float timeToTarget = 1f; // bom bay trong 1 giây
-                                    // Biến trạng thái để kiểm tra xem người chơi có trong vùng không
-    
-    private float lastThrowTime;
+    [Header("Cooldown Settings")]
     public float throwCooldown = 3f;
-    public Transform playerTransform;
+    private float lastThrowTime;
+
+    private Transform playerTransform;
     private Vector2 lastKnownPlayerPos;
-    private bool hasDetectedPlayer = false;
+    public bool hasDetectedPlayer = false;
+    private bool canThrow = true;
 
-    protected override void Start()
+    void Start()
     {
-        base.Start();
+        lastThrowTime = -throwCooldown; // Cho phép ném ngay lần đầu
     }
 
-    protected override void Update()
+    void Update()
     {
-        base.Update();
 
-        if (hasDetectedPlayer)
+        // Debug.Log("hasDetectedPlayer: " + hasDetectedPlayer + "  canThrow: " + canThrow + "  playerTransform: " + playerTransform);
+
+        if (hasDetectedPlayer && canThrow)
         {
-            // Cập nhật vị trí của người chơi liên tục khi đã phát hiện
-            lastKnownPlayerPos = playerTransform.position;            
-            if (Time.time > lastThrowTime + throwCooldown)
-            {
-                lastThrowTime = Time.time;
-                ThrowBomb(lastKnownPlayerPos);
-            }
+            StartCoroutine(ThrowWithDelay());
         }
+        // if (hasDetectedPlayer && playerTransform != null)
+        // {
+        //     lastKnownPlayerPos = playerTransform.position;
+
+        //     float remainingCooldown = (lastThrowTime + throwCooldown) - Time.time;
+
+        //     if (remainingCooldown > 0f)
+        //     {
+        //         // Luôn log countdown cho đến đúng 0.00
+        //         // Debug.Log("Đang chờ cooldown... còn " + Mathf.Max(remainingCooldown, 0f).ToString("F2") + "s");
+        //         // Debug.Log("Đang chờ cooldown... còn " + remainingCooldown.ToString("F2") + "s");
+        //     }
+        //     else
+        //     {
+        //         Debug.Log("Ném bom!");
+        //         lastThrowTime = Time.time;
+        //         // ThrowBomb(lastKnownPlayerPos);
+        //     }
+        // }
     }
+
+
+    IEnumerator ThrowWithDelay()
+    {
+        canThrow = false;
+        Debug.Log("Ném bom!");
+        // ThrowBomb(lastKnownPlayerPos);
+        yield return new WaitForSeconds(throwCooldown);
+        canThrow = true;
+    }
+
     private void ThrowBomb(Vector2 targetPos)
     {
-        // Debug.Log("ThrowBomb");
         if (bombPrefab == null || throwPoint == null) return;
 
-        // Tạo ra một instance của quả bom tại vị trí của ThrowPoint
         GameObject bombInstance = Instantiate(bombPrefab, throwPoint.position, Quaternion.identity);
-        // Hủy quả bom sau lifeTime giây để tránh tạo ra quá nhiều instance
         Destroy(bombInstance, lifeTime);
 
-        //Lấy animation có ngòi nổ
         Animator anim = bombInstance.GetComponent<Animator>();
-        anim.Play("Bomb_Fuse");
+        if (anim != null) anim.Play("Bomb_Fuse");
 
-        // Lấy Rigidbody2D của quả bom để ném nó
         Rigidbody2D rb = bombInstance.GetComponent<Rigidbody2D>();
-
-        // Ném quả bom
-        Vector2 throwVelocity = CalculateThrow(targetPos, throwPoint.position);
-
-        rb.linearVelocity = throwVelocity;
-        rb.angularVelocity = -360f;
-
+        if (rb != null)
+        {
+            Vector2 throwVelocity = CalculateThrow(targetPos, throwPoint.position);
+            rb.linearVelocity = throwVelocity;
+            rb.angularVelocity = -360f;
+        }
     }
 
     public Vector2 CalculateThrow(Vector2 target, Vector2 start)
@@ -84,16 +94,12 @@ public class BombPigParabolicController : BaseEnemyController
         return new Vector2(vx, vy);
     }
 
-
     private void OnTriggerEnter2D(Collider2D other)
     {
-
         if (other != null && other.CompareTag("Player"))
         {
-
-            // lastKnownPlayerPos = playerTransform.position;
-            Debug.Log("Player is in range !");
-            // ThrowBomb(lastKnownPlayerPos);
+            playerTransform = other.transform;
+            lastKnownPlayerPos = other.transform.position;
             hasDetectedPlayer = true;
         }
     }
@@ -102,9 +108,32 @@ public class BombPigParabolicController : BaseEnemyController
     {
         if (other.CompareTag("Player"))
         {
-            // lastKnownPlayerPos = Vector2.zero;
+            playerTransform = null;
+            lastKnownPlayerPos = Vector2.zero;
             hasDetectedPlayer = false;
-            Debug.Log("Player out of range");
         }
+    }
+
+    // private void OnTriggerStay2D(Collider2D other)
+    // {
+    //     Debug.Log("OnTriggerStay2D is called!");
+    //     // hasDetectedPlayer = true;
+    //     if (other.CompareTag("Player"))
+    //     {
+    //         // Debug.Log("vẫn còn trong vùng!");
+    //         // Debug.Log("playerTransform: " + playerTransform);
+    //         Debug.Log("compare true nằm trong vùng!");
+    //         hasDetectedPlayer = true;
+    //         playerTransform = other.transform;
+    //         lastKnownPlayerPos = other.transform.position;
+    //     }
+    // }
+
+    public void OnPlayerDetected(Transform pos)
+    {
+        hasDetectedPlayer = true;
+        // playerTransform = playerPos;
+        // lastKnownPlayerPos = new Vector2(pos.position.x, pos.position.y); // playerpos;
+        playerTransform = pos;
     }
 }

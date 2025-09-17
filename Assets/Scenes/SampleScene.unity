@@ -712,22 +712,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a594725c5a48e6b42969b932848c2ed4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
-  knockbackForce: 0.5
-  knockbackUpForce: 1
-  knockbackDuration: 1
-  groundCheck: {fileID: 496873390}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  groundCheckRadius: 0.5
   lifeTime: 1.5
   throwPoint: {fileID: 1346570807}
-  throwSpeed: 2
+  throwSpeed: 5
   bombPrefab: {fileID: 8613594387808887523, guid: 9afefc3e8fcb35b4ea30378720bfd789, type: 3}
   timeToTarget: 1
   throwCooldown: 2
-  playerTransform: {fileID: 1329162223}
+  hasDetectedPlayer: 0
 --- !u!1 &388083302
 GameObject:
   m_ObjectHideFlags: 0
@@ -1045,9 +1036,10 @@ GameObject:
   - component: {fileID: 521222219}
   - component: {fileID: 521222220}
   - component: {fileID: 521222221}
+  - component: {fileID: 521222222}
   m_Layer: 9
   m_Name: PlayerDetectZone
-  m_TagString: Player
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1130,6 +1122,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &521222222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521222218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdce3da9f54c7574887b7586cf6bf0c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -2666,9 +2670,9 @@ GameObject:
   - component: {fileID: 1329162223}
   - component: {fileID: 1329162222}
   - component: {fileID: 1329162221}
-  - component: {fileID: 1329162224}
   - component: {fileID: 1329162225}
   - component: {fileID: 1329162226}
+  - component: {fileID: 1329162224}
   - component: {fileID: 1329162227}
   - component: {fileID: 1329162228}
   - component: {fileID: 1329162229}
@@ -3169,6 +3173,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   groundCheckRadius: 0.5
+  currentState: 1
 --- !u!114 &1373106274731494109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3198,7 +3203,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3399047632084981029, guid: 4364841c504b9a047bec0286d9aff7a7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.48
+      value: 3.48
       objectReference: {fileID: 0}
     - target: {fileID: 3399047632084981029, guid: 4364841c504b9a047bec0286d9aff7a7, type: 3}
       propertyPath: m_LocalPosition.y

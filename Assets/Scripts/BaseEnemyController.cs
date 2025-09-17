@@ -1,8 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-
-
 public class BaseEnemyController : MonoBehaviour
 {
 
@@ -150,15 +148,7 @@ public class BaseEnemyController : MonoBehaviour
     }
 
 
-    // public virtual void KnockBack(Transform attacker = null)
-    // {
-    //     // Dừng Coroutine cũ để tránh lỗi timing
-    //     StopAllCoroutines();
-
-    //     // Bắt đầu Coroutine mới
-    //     StartCoroutine(KnockBackCoroutine(attacker));
-    // }
-
+   
     // cho class con hoặc bên ngoài gọi (vd Player đánh enemy)
     // transfrom từ player => attacker
 

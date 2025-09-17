@@ -3,8 +3,7 @@ using UnityEngine;
 // Lớp tính đường đi cho quả bom
 public class BombTrajectory : MonoBehaviour
 {
-    public float timeToTarget = 3f;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public float timeToTarget = 3f;    
     
     public Vector2 CalculateThrow(Vector2 target, Vector2 start)
     {
