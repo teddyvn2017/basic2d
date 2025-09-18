@@ -1,8 +1,15 @@
 using System.Collections;
 using UnityEngine;
 
-public class BombPigParabolicController : BaseEnemyController
+public class BombPigParabolicController : MonoBehaviour
 {
+    [Header("Enemy Settings")]
+    protected Rigidbody2D rb;
+    protected Animator animator;
+    public float moveSpeed = 1f;
+    protected bool isFacingRight = false;
+    protected bool isMoving = true;
+
     [Header("Explosion Settings")]
     public float lifeTime = 2f;
     public Transform throwPoint;
@@ -12,77 +19,64 @@ public class BombPigParabolicController : BaseEnemyController
 
     [Header("Cooldown Settings")]
     public float throwCooldown = 3f;
-    private float lastThrowTime;
+    // private float lastThrowTime;
 
-    private Transform playerTransform;
+    private Transform playerTransform; //lưu giá vị trí mà player nằm trong vùng detect zone
+    
+    
     private Vector2 lastKnownPlayerPos;
     public bool hasDetectedPlayer = false;
     private bool canThrow = true;
 
-    protected override void Start()
+
+    [Header("Ground Check")]
+    public Transform groundCheck;
+    public LayerMask groundLayer;
+    public float groundCheckRadius = 0.5f;
+
+
+    [Header("References")]    
+    public Transform player; //dùng để so sánh vị trí cho hàm HandleFlip
+
+
+    [Header("Movement Routine Settings")]
+    private float moveDuration = 3f;  // thời gian chạy
+    private float idleDuration = 1.5f;  // thời gian nghỉ
+
+    // private bool isThrowing = false;
+
+    private void Start()
     {
-        base.Start();
-        // EnemyState = EnemyState.Patrol;
-        lastThrowTime = Time.time;
+        rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        rb.freezeRotation = true;
+        StartCoroutine(MoveRoutine());
     }
 
-    protected override void Update()
+    private void Update()
     {
 
-        base.Update();
-        // Debug.Log("hasDetectedPlayer: " + hasDetectedPlayer);
-        if (hasDetectedPlayer && canThrow)
+        if (hasDetectedPlayer)
         {
-            Attack();
+            StopMovement();
+            HandleFlip();
+            if (canThrow)
+            {
+                
+                StartCoroutine(ThrowWithDelay());
+            }                     
         }
-        //  Debug.Log("hasDetectedPlayer: " + hasDetectedPlayer);
-
-            // if (hasDetectedPlayer && canThrow)
-            // {
-            //     StartCoroutine(ThrowWithDelay());
-            // }
-            // if (hasDetectedPlayer && playerTransform != null)
-            // {
-            //     lastKnownPlayerPos = playerTransform.position;
-
-            //     float remainingCooldown = (lastThrowTime + throwCooldown) - Time.time;
-
-            //     if (remainingCooldown > 0f)
-            //     {
-            //         // Luôn log countdown cho đến đúng 0.00
-            //         // Debug.Log("Đang chờ cooldown... còn " + Mathf.Max(remainingCooldown, 0f).ToString("F2") + "s");
-            //         // Debug.Log("Đang chờ cooldown... còn " + remainingCooldown.ToString("F2") + "s");
-            //     }
-            //     else
-            //     {
-            //         Debug.Log("Ném bom!");
-            //         lastThrowTime = Time.time;
-            //         // ThrowBomb(lastKnownPlayerPos);
-            //     }
-            // }
-    }
-    protected override void Attack()
-    {
-        // Quay đầu về phía người chơi 
-        Vector2 directionToPlayer = lastKnownPlayerPos - (Vector2)transform.position;
-        if (directionToPlayer.x > 0 && !isFacingRight)
-            Flip();
-        else if (directionToPlayer.x < 0 && isFacingRight) Flip();
-        // Debug.Log("lastThrowTime: " + lastThrowTime + " throwCooldown: " + throwCooldown);
-        // if (Time.time >= lastThrowTime + throwCooldown)
-        // {
-        //     Debug.Log("NÉM BOM vào " + playerTransform.position);
-        //     lastThrowTime = Time.time;
-        //     // ThrowBomb(playerTarget.position); //  
-        // }
-
-        StartCoroutine(ThrowWithDelay());
+        else
+        {
+            isMoving = true;
+            Move();
+            CheckGroundAhead();
+        }
     }
 
     IEnumerator ThrowWithDelay()
     {
         canThrow = false;
-        Debug.Log("Ném bom!"+ playerTransform.position.x + " " + playerTransform.position.y);
         ThrowBomb(playerTransform.position);
         yield return new WaitForSeconds(throwCooldown);
         canThrow = true;
@@ -122,9 +116,75 @@ public class BombPigParabolicController : BaseEnemyController
     public void OnPlayerDetected(Transform pos)
     {
         hasDetectedPlayer = true;
-        // Change
-        playerTransform = pos;
-        Debug.Log("Player detected!");  
+        playerTransform = pos;// vị trí mà player đang đứng
+    }
+    
+   
 
+    void Move()
+    {
+        if (!isMoving)
+        {
+            if (animator != null)
+                animator.SetBool("isRunning", false);
+            rb.linearVelocity = Vector2.zero; // enemy đứng yên
+            return;
+        }
+
+        float horizontal = isFacingRight ? 1f : -1f;
+
+        transform.position += new Vector3(horizontal, 0, 0) * moveSpeed * Time.deltaTime;
+        // rb.linearVelocity = new Vector2(horizontal * moveSpeed, 0);
+        if (animator != null)
+            animator.SetBool("isRunning", true);
+
+    }
+
+    void CheckGroundAhead()
+    {
+        // Kiểm tra có mặt đất ở phía trước
+        Vector2 checkPos = groundCheck.position;
+        checkPos.x += isFacingRight ? 0.5f : -0.5f; 
+        bool noGroundAhead = !Physics2D.OverlapCircle(checkPos, groundCheckRadius, groundLayer);
+
+        // Debug.Log("noGroundAhead: " + noGroundAhead);
+        if (noGroundAhead)
+            Flip();
+    }
+
+    public void Flip()
+    {
+        isFacingRight = !isFacingRight;
+        Vector3 scale = transform.localScale;
+        scale.x *= -1;
+        transform.localScale = scale;
+    }
+
+    private IEnumerator MoveRoutine()
+    {
+        while (true)
+        {
+            // chạy
+            isMoving = true;
+            yield return new WaitForSeconds(moveDuration);
+            // nghỉ
+            isMoving = false;
+            yield return new WaitForSeconds(idleDuration);
+        }
+    }    
+
+    private void HandleFlip()
+    {
+        if (player.position.x > transform.position.x && !isFacingRight)
+            Flip();
+        else if (player.position.x < transform.position.x && isFacingRight)
+            Flip();
+    }
+
+    private void StopMovement()
+    {
+        isMoving = false;
+        rb.linearVelocity = Vector2.zero;
+        animator.SetBool("isRunning", false);
     }
 }

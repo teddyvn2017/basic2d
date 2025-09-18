@@ -24,18 +24,18 @@ public class BombController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Vector2 bombPosition = transform.position;
+        Vector2 bombPosition = transform.position;
 
-        // if (other.gameObject.CompareTag("Ground"))
-        // {            
-        //     Vector2 newPos = new Vector2(bombPosition.x, bombPosition.y);            
-        //     ExplodeAt(newPos);
-        // }
-        // if (other.gameObject.CompareTag("Player"))
-        // {
-        //     bombPosition = other.transform.position;
-        //     ExplodeAt(bombPosition);
-        // }        
+        if (other.gameObject.CompareTag("Ground"))
+        {            
+            Vector2 newPos = new Vector2(bombPosition.x, bombPosition.y);            
+            ExplodeAt(newPos);
+        }
+        if (other.gameObject.CompareTag("Player"))
+        {
+            bombPosition = other.transform.position;
+            ExplodeAt(bombPosition);
+        }        
     }
         
     private void ExplodeAt(Vector2 position)

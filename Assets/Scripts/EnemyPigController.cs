@@ -4,10 +4,10 @@ using UnityEngine.Rendering;
 
 public class EnemyPigController : BaseEnemyController
 {
-      
+
     protected override void Start()
     {
-        base.Start();
+        base.Start();       
     }
 
     protected override void Update()

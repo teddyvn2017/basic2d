@@ -13,7 +13,6 @@ public class PlayerDetector : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Debug.Log("Player detected!");
             parentController.hasDetectedPlayer = true;
             parentController.OnPlayerDetected(other.transform);
         }
@@ -21,10 +20,9 @@ public class PlayerDetector : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D other)
     {
-        // Debug.Log("Player stay in range!");
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player stay in range!");
+            // Debug.Log("Player stay in range!");
             parentController.hasDetectedPlayer = true;
             parentController.OnPlayerDetected(other.transform);
         }
@@ -34,6 +32,7 @@ public class PlayerDetector : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            // Debug.Log("Player exit range!");    
             parentController.hasDetectedPlayer = false;
         }
     }

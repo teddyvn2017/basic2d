@@ -712,16 +712,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a594725c5a48e6b42969b932848c2ed4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 0.5
-  knockbackForce: 2
-  knockbackUpForce: 3
-  knockbackDuration: 0.3
-  groundCheck: {fileID: 496873390}
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 8
-  groundCheckRadius: 0.5
-  currentState: 1
+  moveSpeed: 1
   lifeTime: 1.5
   throwPoint: {fileID: 1346570807}
   throwSpeed: 5
@@ -729,6 +720,13 @@ MonoBehaviour:
   timeToTarget: 1
   throwCooldown: 2
   hasDetectedPlayer: 0
+  groundCheck: {fileID: 496873390}
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  groundCheckRadius: 0.5
+  enemy: {fileID: 385604092}
+  player: {fileID: 1329162223}
 --- !u!1 &388083302
 GameObject:
   m_ObjectHideFlags: 0
@@ -3185,7 +3183,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3399047632084981029, guid: 4364841c504b9a047bec0286d9aff7a7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.48
+      value: 3.62
       objectReference: {fileID: 0}
     - target: {fileID: 3399047632084981029, guid: 4364841c504b9a047bec0286d9aff7a7, type: 3}
       propertyPath: m_LocalPosition.y
