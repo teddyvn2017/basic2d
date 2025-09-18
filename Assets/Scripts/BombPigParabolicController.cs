@@ -22,8 +22,8 @@ public class BombPigParabolicController : MonoBehaviour
     // private float lastThrowTime;
 
     private Transform playerTransform; //lưu giá vị trí mà player nằm trong vùng detect zone
-    
-    
+
+
     private Vector2 lastKnownPlayerPos;
     public bool hasDetectedPlayer = false;
     private bool canThrow = true;
@@ -35,7 +35,7 @@ public class BombPigParabolicController : MonoBehaviour
     public float groundCheckRadius = 0.5f;
 
 
-    [Header("References")]    
+    [Header("References")]
     public Transform player; //dùng để so sánh vị trí cho hàm HandleFlip
 
 
@@ -62,14 +62,12 @@ public class BombPigParabolicController : MonoBehaviour
             HandleFlip();
             if (canThrow)
             {
-                
                 StartCoroutine(ThrowWithDelay());
-            }                     
+            }
         }
         else
         {
-            isMoving = true;
-            Move();
+            Move();            
             CheckGroundAhead();
         }
     }
@@ -112,27 +110,18 @@ public class BombPigParabolicController : MonoBehaviour
         return new Vector2(vx, vy);
     }
 
-
     public void OnPlayerDetected(Transform pos)
     {
         hasDetectedPlayer = true;
         playerTransform = pos;// vị trí mà player đang đứng
     }
-    
-   
+
 
     void Move()
     {
-        if (!isMoving)
-        {
-            if (animator != null)
-                animator.SetBool("isRunning", false);
-            rb.linearVelocity = Vector2.zero; // enemy đứng yên
-            return;
-        }
-
+        if (!isMoving) return;// dùng để tạm dừng
         float horizontal = isFacingRight ? 1f : -1f;
-
+        //tạm dùng transform position thay cho linearvelocity
         transform.position += new Vector3(horizontal, 0, 0) * moveSpeed * Time.deltaTime;
         // rb.linearVelocity = new Vector2(horizontal * moveSpeed, 0);
         if (animator != null)
@@ -144,7 +133,7 @@ public class BombPigParabolicController : MonoBehaviour
     {
         // Kiểm tra có mặt đất ở phía trước
         Vector2 checkPos = groundCheck.position;
-        checkPos.x += isFacingRight ? 0.5f : -0.5f; 
+        checkPos.x += isFacingRight ? 0.5f : -0.5f;
         bool noGroundAhead = !Physics2D.OverlapCircle(checkPos, groundCheckRadius, groundLayer);
 
         // Debug.Log("noGroundAhead: " + noGroundAhead);
@@ -162,6 +151,7 @@ public class BombPigParabolicController : MonoBehaviour
 
     private IEnumerator MoveRoutine()
     {
+        //thiết lập biến isMoving thông qua coroutine
         while (true)
         {
             // chạy
@@ -171,7 +161,7 @@ public class BombPigParabolicController : MonoBehaviour
             isMoving = false;
             yield return new WaitForSeconds(idleDuration);
         }
-    }    
+    }
 
     private void HandleFlip()
     {
@@ -184,7 +174,8 @@ public class BombPigParabolicController : MonoBehaviour
     private void StopMovement()
     {
         isMoving = false;
-        rb.linearVelocity = Vector2.zero;
+        // rb.linearVelocity = Vector2.zero;
         animator.SetBool("isRunning", false);
     }
+    
 }
