@@ -24,7 +24,7 @@ public class BombPigParabolicController : MonoBehaviour
     private Transform playerTransform; //lưu giá vị trí mà player nằm trong vùng detect zone
 
 
-    private Vector2 lastKnownPlayerPos;
+    // private Vector2 lastKnownPlayerPos;
     public bool hasDetectedPlayer = false;
     private bool canThrow = true;
 
@@ -43,7 +43,11 @@ public class BombPigParabolicController : MonoBehaviour
     private float moveDuration = 3f;  // thời gian chạy
     private float idleDuration = 1.5f;  // thời gian nghỉ
 
-    // private bool isThrowing = false;
+    [Header("Knockback Settings")]
+    public float knockbackForce = 2f;
+    public float knockbackUpForce = 3f;
+    public float knockbackDuration = 0.3f;
+    protected bool isKnockBack = false;
 
     private void Start()
     {
@@ -67,7 +71,7 @@ public class BombPigParabolicController : MonoBehaviour
         }
         else
         {
-            Move();            
+            Move();
             CheckGroundAhead();
         }
     }
@@ -177,5 +181,23 @@ public class BombPigParabolicController : MonoBehaviour
         // rb.linearVelocity = Vector2.zero;
         animator.SetBool("isRunning", false);
     }
-    
+
+
+    public void KnockBack(Transform attacker = null)
+    {
+        if (isKnockBack) return;
+        isKnockBack = true;
+        animator.SetTrigger("Hit");
+        float horizontalDir = (transform.position.x < attacker.position.x) ? -1f : 1f;
+        rb.linearVelocity = Vector2.zero;
+        Vector2 knockbackDir = new Vector2(horizontalDir * knockbackForce, knockbackUpForce);
+        rb.AddForce(knockbackDir, ForceMode2D.Impulse);        
+        Invoke(nameof(EndKnockback), knockbackDuration);
+    }
+
+    protected void EndKnockback()
+    {
+        isKnockBack = false;       
+        // animator.SetBool("isRunning", true);
+    }
 }

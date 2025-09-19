@@ -118,6 +118,8 @@ public class BaseEnemyController : MonoBehaviour
     public virtual void KnockBack(Transform attacker = null)
     {
         if (isKnockBack) return;
+
+        Debug.Log("KnockBack");
         isKnockBack = true;
         animator.SetTrigger("Hit");
         float horizontalDir = (transform.position.x < attacker.position.x) ? -1f : 1f;
@@ -125,6 +127,8 @@ public class BaseEnemyController : MonoBehaviour
         Vector2 knockbackDir = new Vector2(horizontalDir * knockbackForce, knockbackUpForce);
         rb.AddForce(knockbackDir, ForceMode2D.Impulse);
         Invoke(nameof(EndKnockback), knockbackDuration);
+
+
     }
 
     protected void EndKnockback()

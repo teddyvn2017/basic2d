@@ -8,7 +8,7 @@ public class PlayerAttack : MonoBehaviour
     public Collider2D attackCollider; // collider vùng đánh
     private Animator animator;
 
-    public float attackRange = 1f;
+    public float attackRange = 0.5f;
 
     public LayerMask enemyLayers;// nhớ chọn layer enemy ở inspector
 
@@ -35,6 +35,7 @@ public class PlayerAttack : MonoBehaviour
 
         if (Input.GetKeyDown(attackKey))
         {
+            Debug.Log("Attack");
             AttackEnemy();
         }
 
@@ -71,39 +72,44 @@ public class PlayerAttack : MonoBehaviour
             }
         }
     }
-
-
-    // Dùng Animation Event để bật collider đúng frame đánh
-    // public void AttackEnemy(Collider2D other)
-    // {
-
-    //     if (attackCollider == null || !attackCollider.enabled) return;
-
-    //     EnemyPigHealth enemyHealth = other.GetComponent<EnemyPigHealth>();
-    //     EnemyPigController enemyPigController = other.GetComponent<EnemyPigController>();
-
-    //     if (enemyHealth != null)
-    //         enemyHealth.TakeDamage(attackDamage);
-
-    //     if (enemyPigController != null)
-    //         enemyPigController.KnockBack(transform);
-    // }
-
+    
     public void AttackEnemy()
     {
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+        // Debug.Log("hitEnemies length: " + hitEnemies.Length);
         foreach (Collider2D enemy in hitEnemies)
         {
+            int enemyID = enemy.gameObject.GetInstanceID();
+            // Debug.Log("Đã tấn công kẻ địch có ID: " + enemyID);
             // Debug.Log("Attack enemy");
+
             EnemyPigHealth enemyHealth = enemy.GetComponent<EnemyPigHealth>();
+
+            // 1. Kiểm tra xem có phải là Heo Thường không
             EnemyPigController enemyPigController = enemy.GetComponent<EnemyPigController>();
-
-            if (enemyHealth != null)
-                enemyHealth.TakeDamage(attackDamage);
-
             if (enemyPigController != null)
-                enemyPigController.KnockBack(transform);
-                // Debug.Log("Attack enemy");
+            {
+                Debug.Log("Đã tấn công Heo Thường!");
+                continue;
+            }
+
+            // 2. Kiểm tra xem có phải là Heo Mang Bom không
+            BombPigParabolicController bombPigController = enemy.GetComponent<BombPigParabolicController>();
+
+            if (bombPigController != null)
+            {
+                Debug.Log("Đã tấn công Heo Mang Bom!");
+                bombPigController.KnockBack(this.transform); //truyền vị trí player về heo mang bom
+                continue;
+            }
+            
+
+            // if (enemyHealth != null)
+            //     enemyHealth.TakeDamage(attackDamage);
+
+            // if (enemyPigController != null)
+            //     enemyPigController.KnockBack(transform);    
+            // Debug.Log("Attack enemy");
         }
     }
 
@@ -115,11 +121,11 @@ public class PlayerAttack : MonoBehaviour
     //     Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     // }
     
-    // private void OnDrawGizmos()
-    // {
-    //     if (attackPoint == null) return;
+    private void OnDrawGizmos()
+    {
+        if (attackPoint == null) return;
 
-    //     Gizmos.color = Color.red;
-    //     Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    // }
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
 }

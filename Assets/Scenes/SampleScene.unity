@@ -458,7 +458,7 @@ GameObject:
   m_Component:
   - component: {fileID: 332664221}
   - component: {fileID: 332664220}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: AttackPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -520,7 +520,7 @@ Transform:
   m_GameObject: {fileID: 332664219}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.6, y: 0.17, z: 0}
+  m_LocalPosition: {x: 0.45, y: 0.17, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -726,6 +726,9 @@ MonoBehaviour:
     m_Bits: 8
   groundCheckRadius: 0.5
   player: {fileID: 1329162223}
+  knockbackForce: 2
+  knockbackUpForce: 3
+  knockbackDuration: 0.3
 --- !u!1 &388083302
 GameObject:
   m_ObjectHideFlags: 0
@@ -2850,7 +2853,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.47435898, y: 0.8}
+  m_Size: {x: 1, y: 0.8}
   m_EdgeRadius: 0
 --- !u!114 &1329162227
 MonoBehaviour:
@@ -2870,7 +2873,7 @@ MonoBehaviour:
   attackRange: 0.5
   enemyLayers:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 1152
   attackPoint: {fileID: 332664221}
 --- !u!114 &1329162228
 MonoBehaviour:

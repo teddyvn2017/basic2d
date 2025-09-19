@@ -14,5 +14,8 @@ public class EnemyPigController : BaseEnemyController
     {
         base.Update();
     }
-    
+    // protected override void Attack()
+    // {
+    //     base.Attack();
+    // }
 }
