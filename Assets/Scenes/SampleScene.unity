@@ -726,9 +726,23 @@ MonoBehaviour:
     m_Bits: 8
   groundCheckRadius: 0.5
   player: {fileID: 1329162223}
-  knockbackForce: 2
-  knockbackUpForce: 3
-  knockbackDuration: 0.3
+  knockbackForce: 1
+  knockbackUpForce: 2
+  knockbackDuration: 0.5
+--- !u!114 &385604101
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385604089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 550013cfada44b94aa61eaf26f7bc874, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 2
+  deathDelay: 0.5
 --- !u!1 &388083302
 GameObject:
   m_ObjectHideFlags: 0
@@ -3257,6 +3271,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7655582381116566827, guid: 4364841c504b9a047bec0286d9aff7a7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 385604098}
+    - targetCorrespondingSourceObject: {fileID: 7655582381116566827, guid: 4364841c504b9a047bec0286d9aff7a7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 385604101}
   m_SourcePrefab: {fileID: 100100000, guid: 4364841c504b9a047bec0286d9aff7a7, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

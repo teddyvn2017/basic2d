@@ -44,9 +44,9 @@ public class BombPigParabolicController : MonoBehaviour
     private float idleDuration = 1.5f;  // thời gian nghỉ
 
     [Header("Knockback Settings")]
-    public float knockbackForce = 2f;
+    public float knockbackForce = 1f;
     public float knockbackUpForce = 3f;
-    public float knockbackDuration = 0.3f;
+    public float knockbackDuration = 0.5f;
     protected bool isKnockBack = false;
 
     private void Start()
@@ -86,12 +86,17 @@ public class BombPigParabolicController : MonoBehaviour
 
     private void ThrowBomb(Vector2 targetPos)
     {
+        // Lấy Animator của con heo (GameObject chứa script này)
+        Animator pigAnimator = GetComponent<Animator>();
+        if (pigAnimator != null)
+            pigAnimator.SetTrigger("ThrowBomb");
         if (bombPrefab == null || throwPoint == null) return;
 
         GameObject bombInstance = Instantiate(bombPrefab, throwPoint.position, Quaternion.identity);
         Destroy(bombInstance, lifeTime);
 
         Animator anim = bombInstance.GetComponent<Animator>();
+        // Animator bombPigBodyAnim = GetComponent<Animator>();
         if (anim != null) anim.Play("Bomb_Fuse");
 
         Rigidbody2D rb = bombInstance.GetComponent<Rigidbody2D>();

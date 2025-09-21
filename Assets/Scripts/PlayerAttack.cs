@@ -59,19 +59,20 @@ public class PlayerAttack : MonoBehaviour
         attackCollider.enabled = false;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (!attackCollider.enabled) return;
+    // void OnTriggerEnter2D(Collider2D other)
+    // {
+    //     if (!attackCollider.enabled) return;
 
-        if (other.CompareTag("Enemy"))
-        {
-            EnemyPigHealth enemyHealth = other.GetComponent<EnemyPigHealth>();
-            if (enemyHealth != null)
-            {
-                enemyHealth.TakeDamage(attackDamage, this.transform);
-            }
-        }
-    }
+    //     if (other.CompareTag("Enemy"))
+    //     {
+    //         EnemyPigHealth enemyHealth = other.GetComponent<EnemyPigHealth>();
+    //         if (enemyHealth != null)
+    //         {
+    //             // enemyHealth.TakeDamage(attackDamage, this.transform);
+    //             Debug.Log("Attack enemy");
+    //         }
+    //     }
+    // }
     
     public void AttackEnemy()
     {
@@ -79,11 +80,14 @@ public class PlayerAttack : MonoBehaviour
         // Debug.Log("hitEnemies length: " + hitEnemies.Length);
         foreach (Collider2D enemy in hitEnemies)
         {
-            int enemyID = enemy.gameObject.GetInstanceID();
-            // Debug.Log("Đã tấn công kẻ địch có ID: " + enemyID);
-            // Debug.Log("Attack enemy");
+            // int enemyID = enemy.gameObject.GetInstanceID();
 
             EnemyPigHealth enemyHealth = enemy.GetComponent<EnemyPigHealth>();
+            if (enemyHealth != null)
+            {                
+               bool isDead = enemyHealth.TakeDamage(attackDamage);
+               if (isDead) continue;
+            }
 
             // 1. Kiểm tra xem có phải là Heo Thường không
             EnemyPigController enemyPigController = enemy.GetComponent<EnemyPigController>();
@@ -98,7 +102,6 @@ public class PlayerAttack : MonoBehaviour
 
             if (bombPigController != null)
             {
-                Debug.Log("Đã tấn công Heo Mang Bom!");
                 bombPigController.KnockBack(this.transform); //truyền vị trí player về heo mang bom
                 continue;
             }

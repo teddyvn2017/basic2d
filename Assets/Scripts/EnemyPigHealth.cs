@@ -28,30 +28,29 @@ public class EnemyPigHealth : MonoBehaviour
         controller = GetComponent<EnemyPigController>();
     }
 
-    public void TakeDamage(int damage, Transform attacker = null)
+    public bool TakeDamage(int damage)
     {
+        // Debug.Log("currentHealth: " + currentHealth);
+        if (currentHealth <= 0) return false;
+        currentHealth -= damage;
         // if (currentHealth <= 0) return; // chết rồi thì thoát khỏi hàm
 
+        // Nếu máu <= 0, gọi hàm Die() và trả về true
         if (currentHealth <= 0)
         {
             Die();
-            // Debug.Log("Enemy is dead!");
-        }
-
-        else
-        {
-            currentHealth -= damage;    
-        }
-    
+            return true;
+        }        
+        
+         // Nếu vẫn sống, trả về false
+        return false;
     }
 
     void Die()
     {
-
+        Debug.Log("Enemy is dead!");
         // animator?.SetBool("isRunning", false);
-        animator?.SetTrigger("Death");        
-        // rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
-
+        animator?.SetTrigger("Die");               
         Destroy(gameObject, deathDelay);
     }    
 }

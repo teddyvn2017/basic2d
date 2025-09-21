@@ -127,8 +127,6 @@ public class BaseEnemyController : MonoBehaviour
         Vector2 knockbackDir = new Vector2(horizontalDir * knockbackForce, knockbackUpForce);
         rb.AddForce(knockbackDir, ForceMode2D.Impulse);
         Invoke(nameof(EndKnockback), knockbackDuration);
-
-
     }
 
     protected void EndKnockback()
