@@ -19,20 +19,21 @@ public class CanonPigController : MonoBehaviour
     [Header("Shoot Settings")]
     public float lifeTime = 2f;
     public Transform shootPoint;
-    public float throwSpeed = 5f;
+    // public float throwSpeed = 5f;
     public GameObject bombPrefab;
     // public float timeToTarget = 3f;
 
 
     [Header("Movement Routine Settings")]
-    private float moveDuration = 3f;  // thời gian chạy
-    private float idleDuration = 1.5f;  // thời gian nghỉ
+    // private float moveDuration = 3.f;  // thời gian chạy
+    // private float idleDuration = 1.5f;  // thời gian nghỉ
     public float moveSpeed = 1f;
     private float randomMoveDuration;
     private float randomIdleDuration;
 
     [Header("References")]
     public Transform player; //dùng để so sánh vị trí cho hàm HandleFlip()
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -49,9 +50,16 @@ public class CanonPigController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (hasDetectedPlayer)
+        {
+            shootToPlayer();
+        }
+        else
+        {
+            CheckGroundAhead();
+            Move();
 
-        CheckGroundAhead();
-        Move();
+        }
         // if (hasDetectedPlayer)
         // {
         //     // StopMovement();
@@ -77,7 +85,7 @@ public class CanonPigController : MonoBehaviour
         // rb.linearVelocity = new Vector2(horizontal * moveSpeed, 0);
         if (animator != null)
             Debug.Log("isRunning");
-            // animator.SetBool("isRunning", true);
+        // animator.SetBool("isRunning", true);
 
     }
 
@@ -114,12 +122,26 @@ public class CanonPigController : MonoBehaviour
             yield return new WaitForSeconds(randomIdleDuration);
         }
     }
-    
+
     private void HandleFlip()
     {
         if (player.position.x > transform.position.x && !isFacingRight)
             Flip();
         else if (player.position.x < transform.position.x && isFacingRight)
             Flip();
+    }
+
+    public void OnPlayerDetected(Transform pos)
+    {
+        hasDetectedPlayer = true;
+        // playerTransform = pos;// vị trí mà player đang đứng
+    }
+
+    private void shootToPlayer()
+    {
+        if (canShoot)
+        {
+            // StartCoroutine(ThrowWithDelay());
+        }
     }
 }

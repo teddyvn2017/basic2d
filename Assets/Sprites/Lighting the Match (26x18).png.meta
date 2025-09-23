@@ -1,16 +1,16 @@
 fileFormatVersion: 2
-guid: 7fe8fd5e50e93eb4eb09d261d9acc926
+guid: 8de521bc4e5b6794794e0871c900f3c7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7371867003279248445
-    second: Match On (26x18)_0
+      213: 3650614159125041722
+    second: Lighting the Match (26x18)_0
   - first:
-      213: 4668011076242419235
-    second: Match On (26x18)_1
+      213: 5126536057754478943
+    second: Lighting the Match (26x18)_1
   - first:
-      213: 3638542774308911904
-    second: Match On (26x18)_2
+      213: 8706800131634881894
+    second: Lighting the Match (26x18)_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -119,13 +119,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Match On (26x18)_0
+      name: Lighting the Match (26x18)_0
       rect:
         serializedVersion: 2
-        x: 2
+        x: 4
         y: 0
-        width: 21
-        height: 17
+        width: 20
+        height: 15
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,20 +134,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 3c3fd12b40ed1b990800000000000000
-      internalID: -7371867003279248445
+      spriteID: a32d8a66c3699a230800000000000000
+      internalID: 3650614159125041722
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Match On (26x18)_1
+      name: Lighting the Match (26x18)_1
       rect:
         serializedVersion: 2
         x: 28
         y: 0
         width: 21
-        height: 17
+        height: 16
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -156,19 +156,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 32ea407775b18c040800000000000000
-      internalID: 4668011076242419235
+      spriteID: f59efaa026d152740800000000000000
+      internalID: 5126536057754478943
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Match On (26x18)_2
+      name: Lighting the Match (26x18)_2
       rect:
         serializedVersion: 2
-        x: 54
+        x: 52
         y: 0
-        width: 21
+        width: 23
         height: 17
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -178,8 +178,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 02b3fba1063be7230800000000000000
-      internalID: 3638542774308911904
+      spriteID: 665eb60d694c4d870800000000000000
+      internalID: 8706800131634881894
       vertices: []
       indices: 
       edges: []
@@ -188,7 +188,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: efebfcd8c5b613a42a974674b6a80dfa
+    spriteID: 3a03fe6bd7a534a438504547d8be6994
     internalID: 0
     vertices: []
     indices: 
@@ -200,9 +200,9 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":64.0,"y":64.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
-      Match On (26x18)_0: -7371867003279248445
-      Match On (26x18)_1: 4668011076242419235
-      Match On (26x18)_2: 3638542774308911904
+      Lighting the Match (26x18)_0: 3650614159125041722
+      Lighting the Match (26x18)_1: 5126536057754478943
+      Lighting the Match (26x18)_2: 8706800131634881894
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
