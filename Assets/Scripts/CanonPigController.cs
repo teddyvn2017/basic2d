@@ -1,4 +1,5 @@
 using System.Collections;
+using NUnit.Framework;
 using UnityEngine;
 
 public class CanonPigController : MonoBehaviour
@@ -10,11 +11,12 @@ public class CanonPigController : MonoBehaviour
 
     public bool hasDetectedPlayer = false;
     private bool canShoot = true;
+    private bool hasReachedCanon = false;
 
     [Header("Ground Check")]
     public Transform groundCheck;
     public LayerMask groundLayer;
-    public float groundCheckRadius = 0.5f;
+    public float groundCheckRadius = 0.6f;
 
     [Header("Shoot Settings")]
     public float lifeTime = 2f;
@@ -24,25 +26,30 @@ public class CanonPigController : MonoBehaviour
     // public float timeToTarget = 3f;
 
 
-    [Header("Movement Routine Settings")]
+    // [Header("Movement Routine Settings")]
     // private float moveDuration = 3.f;  // thời gian chạy
     // private float idleDuration = 1.5f;  // thời gian nghỉ
+    [Header("Movement Routine Settings")]
     public float moveSpeed = 1f;
+    public float stoppingDistance = 0.3f;
     private float randomMoveDuration;
     private float randomIdleDuration;
 
     [Header("References")]
     public Transform player; //dùng để so sánh vị trí cho hàm HandleFlip()
 
+    public Transform canonTransform;
+    public Transform canonDestination;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        isMoving = true;
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        rb.freezeRotation = true;
-        StartCoroutine(MoveRoutine());
         animator.SetBool("isRunning", true);
+        // rb.freezeRotation = true;
+        StartCoroutine(MoveRoutine());
         randomMoveDuration = Random.Range(2f, 4f);
         randomIdleDuration = Random.Range(1f, 2f);
     }
@@ -52,41 +59,35 @@ public class CanonPigController : MonoBehaviour
     {
         if (hasDetectedPlayer)
         {
-            shootToPlayer();
+            // StopCoroutine(MoveRoutine());     
+            HandleFlip();
+            MoveToCanon();
         }
         else
         {
-            CheckGroundAhead();
             Move();
-
+            CheckCanonAhead();
+            CheckGroundAhead();
         }
-        // if (hasDetectedPlayer)
-        // {
-        //     // StopMovement();
-        //     HandleFlip();
-        //     // if (canThrow)
-        //     // {
-        //     //     StartCoroutine(ThrowWithDelay());
-        //     // }
-        // }
-        // else
-        // {
-        //     Move();
-        //     CheckGroundAhead();
-        // }
     }
 
     void Move()
     {
-        if (!isMoving) return;// dùng để tạm dừng
+        if (!isMoving) return; // kết hợp với kiểu di chuyển tuần tra 
+        animator.SetBool("isRunning", true);
         float horizontal = isFacingRight ? 1f : -1f;
         //tạm dùng transform position thay cho linearvelocity
         transform.position += new Vector3(horizontal, 0, 0) * moveSpeed * Time.deltaTime;
         // rb.linearVelocity = new Vector2(horizontal * moveSpeed, 0);
-        if (animator != null)
-            Debug.Log("isRunning");
-        // animator.SetBool("isRunning", true);
+    }
 
+    // Kiểm tra có khẩu súng cannon ở phía trước hay không
+    private void CheckCanonAhead()
+    {
+        Vector2 targetPos = canonTransform.position;
+        float d = Vector2.Distance(transform.position, targetPos);
+        if (d < stoppingDistance)
+            Flip();
     }
 
     void CheckGroundAhead()
@@ -95,8 +96,6 @@ public class CanonPigController : MonoBehaviour
         Vector2 checkPos = groundCheck.position;
         checkPos.x += isFacingRight ? 0.5f : -0.5f;
         bool noGroundAhead = !Physics2D.OverlapCircle(checkPos, groundCheckRadius, groundLayer);
-
-        // Debug.Log("noGroundAhead: " + noGroundAhead);
         if (noGroundAhead)
             Flip();
     }
@@ -137,11 +136,36 @@ public class CanonPigController : MonoBehaviour
         // playerTransform = pos;// vị trí mà player đang đứng
     }
 
-    private void shootToPlayer()
+
+    private void MoveToCanon()
     {
-        if (canShoot)
+        // Lấy vị trí của con heo và súng cannon
+        Vector2 targetPos = canonTransform.position;
+        float d = Vector2.Distance(transform.position, targetPos);
+        if (d > stoppingDistance)
         {
-            // StartCoroutine(ThrowWithDelay());
+            transform.position = Vector2.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+            // Đảm bảo con heo sẽ xoay về hướng player khi detect player bằng true
+            HandleFlip();
+
+        }
+        else
+        {
+            //đảm bảo con heo hướng về player trước khi châm ngòi nổ
+            HandleFlip();
+            MoveBackLittleBit(targetPos);
+            animator.SetBool("isRunning", false);
+            animator.SetTrigger("LightingMatch");
+
         }
     }
+
+    //Mục đích dịch chuyển con heo lại 1 chút để đứng phía trước canon
+    private void MoveBackLittleBit(Vector2 targetPos)
+    {
+        Vector2 moveLitleBit = new Vector2(targetPos.x - stoppingDistance, transform.position.y);
+        transform.position = Vector2.MoveTowards(transform.position, moveLitleBit, moveSpeed * Time.deltaTime);
+    }
+
+    
 }

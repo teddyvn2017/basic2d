@@ -3,9 +3,17 @@ using UnityEngine;
 public class CanonPigDetector : MonoBehaviour
 {
 
-    private CanonPigController parentController =  new CanonPigController();
+    private CanonPigController parentController;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
+    private void Awake()
+    {
+        parentController = GetComponentInParent<CanonPigController>();
+        if (parentController == null)
+        {
+            Debug.LogError("Lỗi: Không tìm thấy CanonPigController trên đối tượng cha.");
+        }
+    }
 
     private void OnTriggerStay2D(Collider2D other)
     {
@@ -26,5 +34,11 @@ public class CanonPigDetector : MonoBehaviour
         }
     }
     
+
+    // private void OnDrawGizmosSelected()
+    // {
+    //     Gizmos.color = Color.yellow;
+    //     Gizmos.DrawWireSphere(transform.position,    );
+    // }
     
 }
