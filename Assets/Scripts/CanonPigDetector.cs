@@ -18,8 +18,7 @@ public class CanonPigDetector : MonoBehaviour
     private void OnTriggerStay2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
-        {
-            // Debug.Log("Player stay in range!");
+        {         
             parentController.hasDetectedPlayer = true;
             parentController.OnPlayerDetected(other.transform);
         }
@@ -28,17 +27,8 @@ public class CanonPigDetector : MonoBehaviour
     private void OnTriggerExit2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
-        {
-            // Debug.Log("Player exit range!");    
-            parentController.hasDetectedPlayer = false;
+        {     
+            parentController.OnPlayerExitRange();
         }
-    }
-    
-
-    // private void OnDrawGizmosSelected()
-    // {
-    //     Gizmos.color = Color.yellow;
-    //     Gizmos.DrawWireSphere(transform.position,    );
-    // }
-    
+    }    
 }
