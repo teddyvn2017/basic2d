@@ -1,5 +1,5 @@
 using System.Collections;
-using NUnit.Framework;
+using System; // Cần thêm namespace này để sử dụng Math.Round
 using UnityEngine;
 
 public class CanonPigController : MonoBehaviour
@@ -10,8 +10,8 @@ public class CanonPigController : MonoBehaviour
     private bool isMoving = true;
 
     public bool hasDetectedPlayer = false;
-    private bool canShoot = true;
-    private bool hasReachedCanon = false;
+    // private bool canShoot = true;
+    // private bool hasReachedCanon = false;
 
     [Header("Ground Check")]
     public Transform groundCheck;
@@ -19,16 +19,13 @@ public class CanonPigController : MonoBehaviour
     public float groundCheckRadius = 0.6f;
 
     [Header("Shoot Settings")]
-    public float lifeTime = 2f;
     public Transform shootPoint;
     // public float throwSpeed = 5f;
     public GameObject bombPrefab;
+    public float timeBetweenShots = 1.5f;
+    // public float timeWaitAfterShot = 0.5f;
     // public float timeToTarget = 3f;
 
-
-    // [Header("Movement Routine Settings")]
-    // private float moveDuration = 3.f;  // thời gian chạy
-    // private float idleDuration = 1.5f;  // thời gian nghỉ
     [Header("Movement Routine Settings")]
     public float moveSpeed = 1f;
     public float stoppingDistance = 0.3f;
@@ -37,9 +34,10 @@ public class CanonPigController : MonoBehaviour
 
     [Header("References")]
     public Transform player; //dùng để so sánh vị trí cho hàm HandleFlip()
-
     public Transform canonTransform;
     public Transform canonDestination;
+
+    public Animator canonAnimator;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -50,24 +48,26 @@ public class CanonPigController : MonoBehaviour
         animator.SetBool("isRunning", true);
         // rb.freezeRotation = true;
         StartCoroutine(MoveRoutine());
-        randomMoveDuration = Random.Range(2f, 4f);
-        randomIdleDuration = Random.Range(1f, 2f);
+        randomMoveDuration = UnityEngine.Random.Range(2f, 4f);
+        randomIdleDuration = UnityEngine.Random.Range(1f, 2f);
     }
 
     // Update is called once per frame
     void Update()
     {
+
         if (hasDetectedPlayer)
         {
-            // StopCoroutine(MoveRoutine());     
             HandleFlip();
             MoveToCanon();
         }
         else
         {
+            StopCoroutine("CanonFireRoutine");
             Move();
             CheckCanonAhead();
             CheckGroundAhead();
+            
         }
     }
 
@@ -133,6 +133,7 @@ public class CanonPigController : MonoBehaviour
     public void OnPlayerDetected(Transform pos)
     {
         hasDetectedPlayer = true;
+        // StopAllCoroutines();
         // playerTransform = pos;// vị trí mà player đang đứng
     }
 
@@ -142,21 +143,31 @@ public class CanonPigController : MonoBehaviour
         // Lấy vị trí của con heo và súng cannon
         Vector2 targetPos = canonTransform.position;
         float d = Vector2.Distance(transform.position, targetPos);
+        d = (float)Math.Round(d, 2);
+        //Debug.Log("Distance: " + d + "  Stopping Distance: " + stoppingDistance);
+
+        // if (Math.Abs(d - stoppingDistance) < 0.3f)
         if (d > stoppingDistance)
         {
+
             transform.position = Vector2.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
             // Đảm bảo con heo sẽ xoay về hướng player khi detect player bằng true
             HandleFlip();
-
+            StopCoroutine("CanonFireRoutine");            
+            // hasReachedCanon = false;
+            // Debug.Log("Move to canon");
         }
-        else
+        //canh con heo ở khoảng cách vừa phải để đứng trước canon
+        // đảm bảo lệnh else được chạy
+        else if (Math.Abs(d - stoppingDistance) < 0.2f)
         {
-            //đảm bảo con heo hướng về player trước khi châm ngòi nổ
-            HandleFlip();
-            MoveBackLittleBit(targetPos);
+
+            HandleFlip();   //đảm bảo con heo hướng về player trước khi châm ngòi nổ
             animator.SetBool("isRunning", false);
             animator.SetTrigger("LightingMatch");
-
+            // canonAnimator.SetTrigger("Fire");
+            // Debug.Log("Fire");
+            StartCoroutine("CanonFireRoutine");            
         }
     }
 
@@ -166,6 +177,14 @@ public class CanonPigController : MonoBehaviour
         Vector2 moveLitleBit = new Vector2(targetPos.x - stoppingDistance, transform.position.y);
         transform.position = Vector2.MoveTowards(transform.position, moveLitleBit, moveSpeed * Time.deltaTime);
     }
-
-    
+       
+    private IEnumerator CanonFireRoutine()
+    {
+        while (true)
+        {
+            canonAnimator.SetTrigger("Fire");
+            yield return new WaitForSeconds(timeBetweenShots);        
+        }
+        
+    }
 }

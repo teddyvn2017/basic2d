@@ -2186,14 +2186,16 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   groundCheckRadius: 0.5
-  lifeTime: 2
   shootPoint: {fileID: 0}
   bombPrefab: {fileID: 0}
+  timeBetweenShots: 1
+  timeWaitAfterShot: 0.5
   moveSpeed: 1
   stoppingDistance: 0.6
   player: {fileID: 1329162223}
   canonTransform: {fileID: 882442700}
   canonDestination: {fileID: 1502234882}
+  canonAnimator: {fileID: 882442701}
 --- !u!95 &818470595
 Animator:
   serializedVersion: 7
@@ -2219,6 +2221,11 @@ Animator:
 --- !u!4 &882442700 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 525089256454752198, guid: 1ea5e3c6aa8d266488006bc679c4b1a6, type: 3}
+  m_PrefabInstance: {fileID: 2269838995324769980}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &882442701 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5467058155111495911, guid: 1ea5e3c6aa8d266488006bc679c4b1a6, type: 3}
   m_PrefabInstance: {fileID: 2269838995324769980}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &904465395
@@ -3187,7 +3194,7 @@ Transform:
   m_GameObject: {fileID: 1502234881}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.55, y: -0.38, z: 0}
+  m_LocalPosition: {x: -1.71, y: -0.38, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
