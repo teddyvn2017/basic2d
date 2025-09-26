@@ -1,6 +1,7 @@
 using System.Collections;
 using System; // Cần thêm namespace này để sử dụng Math.Round
 using UnityEngine;
+// using System.Numerics;
 
 public class CanonPigController : MonoBehaviour
 {
@@ -21,9 +22,9 @@ public class CanonPigController : MonoBehaviour
     [Header("Shoot Settings")]
     public Transform shootPoint;
     // public float throwSpeed = 5f;
-    public GameObject bombPrefab;
+    public GameObject bombOffPrefab;
     public float timeBetweenShots = 1.5f;
-    // public float timeWaitAfterShot = 0.5f;
+    public float bombSpeed = 3f;
     // public float timeToTarget = 3f;
 
     [Header("Movement Routine Settings")]
@@ -37,10 +38,9 @@ public class CanonPigController : MonoBehaviour
     public Transform canonTransform;
     public Transform canonDestination;
 
-    public Animator canonAnimator;
+    public Animator canonAnimator;//gán canon trong Inspector
 
     private bool hasStartedLighting = false;
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -57,7 +57,6 @@ public class CanonPigController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         if (hasDetectedPlayer)
         {
             HandleFlip();
@@ -65,11 +64,10 @@ public class CanonPigController : MonoBehaviour
         }
         else
         {
-            StopCoroutine("CanonFireRoutine");
+            // StopAllCoroutines();
             Move();
             CheckCanonAhead();
             CheckGroundAhead();
-
         }
     }
 
@@ -117,11 +115,11 @@ public class CanonPigController : MonoBehaviour
         {
             // chạy
             isMoving = true;
-            animator.SetBool("isRunning", true);
+            // animator.SetBool("isRunning", true);
             yield return new WaitForSeconds(randomMoveDuration);
             // nghỉ
             isMoving = false;
-            animator.SetBool("isRunning", false);
+            // animator.SetBool("isRunning", false);
             yield return new WaitForSeconds(randomIdleDuration);
         }
     }
@@ -143,82 +141,110 @@ public class CanonPigController : MonoBehaviour
 
     public void OnPlayerExitRange()
     {
+        Debug.Log("OnPlayerExitRange");
         // Đặt lại các biến trạng thái
         hasDetectedPlayer = false;
-        
+        hasStartedLighting = false;
+
         // Dừng mọi Coroutine đang chạy trên CanonPigController
-        StopAllCoroutines();
-        
-        // Bắt đầu lại Coroutine tuần tra
-        StartCoroutine("MoveRoutine");
+        // StopAllCoroutines();
+        CancelInvoke(nameof(StartFiring));
+
     }
 
 
-    private void MoveToCanon()
+        private void MoveToCanon()
+        {
+            // Lấy vị trí của con heo và súng cannon
+            Vector2 targetPos = canonTransform.position;
+            float d = Vector2.Distance(transform.position, targetPos);
+            d = (float)Math.Round(d, 2);
+            if (d > stoppingDistance)
+            {
+                transform.position = Vector2.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);          
+                HandleFlip();
+            }
+            //canh con heo ở khoảng cách vừa phải để đứng trước canon,đảm bảo lệnh else được chạy        
+            else
+            {
+                Debug.Log("hasStartedLighting: " + hasStartedLighting);
+                HandleFlip();   //đảm bảo con heo hướng về player trước khi châm ngòi nổ
+                animator.SetBool("isRunning", false);
+                // Lưu ý : không thể gọi liên tiếp 2 animation clip liên tiếp
+                // do đó phải sử dụng coroutine, animation không hoạt động theo kiểu tuần tự 
+                // animator.SetTrigger("MatchingOn");
+                // animator.SetTrigger("LightingToCanon");           
+                
+                if (!hasStartedLighting)
+                {
+                    StartCoroutine(LightCanonRoutine());
+                    hasStartedLighting = true; 
+                }
+            }
+        }
+
+    private IEnumerator LightCanonRoutine()
     {
-        // Lấy vị trí của con heo và súng cannon
-        Vector2 targetPos = canonTransform.position;
-        float d = Vector2.Distance(transform.position, targetPos);
-        d = (float)Math.Round(d, 2);
-        if (d > stoppingDistance)
-        {
+        // 1. Pig quẹt diêm
+        animator.SetTrigger("MatchingOn");
+        yield return new WaitForSeconds(0.5f);
 
-            transform.position = Vector2.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
-            // Đảm bảo con heo sẽ xoay về hướng player khi detect player bằng true
-            StopAllCoroutines();
-            HandleFlip();
+        // 2. Pig đưa diêm vào canon
+        animator.SetTrigger("LightingToCanon");
+        yield return new WaitForSeconds(0.5f);
 
-        }
-        //canh con heo ở khoảng cách vừa phải để đứng trước canon
-        // đảm bảo lệnh else được chạy
-        else if (Math.Abs(d - stoppingDistance) < 0.2f)
-        {
-
-            HandleFlip();   //đảm bảo con heo hướng về player trước khi châm ngòi nổ
-            animator.SetBool("isRunning", false);
-            // Lưu ý : không thể gọi liên tiếp 2 animation clip liên tiếp
-            // nên sử dụng coroutine 
-            // animator.SetTrigger("MatchingOn");
-            // animator.SetTrigger("LightingToCanon");
-            StartCoroutine("LightCanonRoutine");
-        }
+        // 3. Bắt đầu bắn liên tục (canon animation + spawn bomb)
+        StartCoroutine(CanonFireRoutine());
     }
-
-    //Mục đích dịch chuyển con heo lại 1 chút để đứng phía trước canon
-
 
     //animation của súng canon
     private IEnumerator CanonFireRoutine()
     {
-        while (true)
+        while (hasDetectedPlayer) // chỉ bắn khi player còn trong vùng
         {
-
-            canonAnimator.SetTrigger("Fire");
+            canonAnimator.SetTrigger("Fire"); // animation canon bắn
+            ShootBomb();                       // spawn bomb
             yield return new WaitForSeconds(timeBetweenShots);
         }
-
     }
 
-    //animation châm lửa khai hỏa của con heo
-    private IEnumerator LightCanonRoutine()
+    private void ShootBomb()
     {
-        // 1. Kích hoạt animation châm diêm
-        animator.SetTrigger("MatchingOn");
+        Debug.Log("Shoot bomb");
+        if (bombOffPrefab != null && shootPoint != null)
+        {
+            //tạo đối tượng quả bom ở vị trí đã khai báo sẵn ở inspector            
+            GameObject bo = Instantiate(bombOffPrefab, shootPoint.position, Quaternion.identity);
 
-        // 2. Chờ cho animation châm diêm hoàn thành
-        yield return new WaitForSeconds(0.4f);
+            Rigidbody2D rb = bo.GetComponent<Rigidbody2D>();
+            // --- Tính toán hướng bắn ---
+            Vector2 target = player.position;
+            Vector2 origin = shootPoint.position;
+            Vector2 dir = (target - origin).normalized;
 
-        // 3. Kích hoạt animation đưa diêm vào canon
-        animator.SetTrigger("LightingToCanon");
+            // --- Tính lực bắn ---
+            float angle = 45f * Mathf.Deg2Rad; // góc bắn
+            float distance = Vector2.Distance(origin, target); // khoảng cách bắn
+                                                               // Công thức đơn giản: v = sqrt(d * g / sin(2θ))
+            float g = Physics2D.gravity.magnitude;
+            float velocity = Mathf.Sqrt(distance * g / Mathf.Sin(2 * angle));
 
-        // 4. Bắt đầu coroutine bắn súng
-        StartCoroutine("CanonFireRoutine");
+            // Vector vận tốc ban đầu theo góc
+            Vector2 launchVelocity = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * velocity;
+            // Đảm bảo bom bay theo hướng player (trái/phải)
+            if (target.x < origin.x) launchVelocity.x = -launchVelocity.x;
 
+            // --- Thực hiện bắn ---
+            rb.AddForce(launchVelocity, ForceMode2D.Impulse);
+
+        }
     }
-    
-    private void MoveBackLittleBit(Vector2 targetPos)
+
+    private void StartFiring()
     {
-        Vector2 moveLitleBit = new Vector2(targetPos.x - stoppingDistance, transform.position.y);
-        transform.position = Vector2.MoveTowards(transform.position, moveLitleBit, moveSpeed * Time.deltaTime);
-    }    
+        if (!hasDetectedPlayer) return;
+        canonAnimator.SetTrigger("Fire");
+        ShootBomb();
+    }
+
 }
