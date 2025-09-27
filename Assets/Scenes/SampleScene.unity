@@ -642,7 +642,7 @@ Transform:
   m_GameObject: {fileID: 339077919}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.17, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2334,7 +2334,7 @@ MonoBehaviour:
   groundCheckRadius: 0.5
   shootPoint: {fileID: 339077920}
   bombOffPrefab: {fileID: 5823022311548929094, guid: 2b4e0427f620234408679989a8bc11ac, type: 3}
-  timeBetweenShots: 2
+  timeBetweenShots: 3
   bombSpeed: 5
   moveSpeed: 1
   stoppingDistance: 0.3

@@ -2,19 +2,19 @@ using UnityEditor.Callbacks;
 using UnityEngine;
 
 public class BombController : MonoBehaviour
-{   
+{
     // public float lifeTime = 3f;
     public GameObject explosionPrefab; // Prefab hiệu ứng nổ (BombExplosion)
     // private Rigidbody2D rb;
     private bool hasExploded = false;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        // rb = GetComponent<Rigidbody2D>();
-        //Destroy(gameObject, lifeTime);
+    // void Start()
+    // {
+    //     // rb = GetComponent<Rigidbody2D>();
+    //     //Destroy(gameObject, lifeTime);
 
 
-    }
+    // }
 
     // Update is called once per frame
     // void Update()
@@ -27,17 +27,17 @@ public class BombController : MonoBehaviour
         Vector2 bombPosition = transform.position;
 
         if (other.gameObject.CompareTag("Ground"))
-        {            
-            Vector2 newPos = new Vector2(bombPosition.x, bombPosition.y);            
+        {
+            Vector2 newPos = new Vector2(bombPosition.x, bombPosition.y);
             ExplodeAt(newPos);
         }
         if (other.gameObject.CompareTag("Player"))
         {
             bombPosition = other.transform.position;
             ExplodeAt(bombPosition);
-        }        
+        }
     }
-        
+
     private void ExplodeAt(Vector2 position)
     {
         if (hasExploded) return;
@@ -51,15 +51,24 @@ public class BombController : MonoBehaviour
         // Gọi animation
         if (animator != null)
             animator.SetTrigger("Exploding");
-            
+
         // Sinh ra hiệu ứng nổ tại vị trí bom
         if (explosionPrefab != null)
         {
             GameObject explosion = Instantiate(explosionPrefab, pos, Quaternion.identity);
-            Destroy(explosion, 1f); // xóa hiệu ứng nổ
+            Destroy(explosion, 0.1f); // xóa hiệu ứng nổ
         }
 
         // Xóa bom sau khi nổ
         Destroy(gameObject, 0.3f); // xóa bom prefab
     }
+    
+    // private void OnCollisionEnter2D(Collision2D collision)
+    // {
+    //     // Có thể kiểm tra tag nếu cần
+    //     if (collision.gameObject.CompareTag("Ground") || collision.gameObject.CompareTag("Player"))
+    //     {
+    //         Destroy(gameObject);
+    //     }
+    // }
 }
