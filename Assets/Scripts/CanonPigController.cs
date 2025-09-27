@@ -188,11 +188,7 @@ public class CanonPigController : MonoBehaviour
         animator.SetTrigger("MatchingOn");
         yield return new WaitForSeconds(1f);
 
-        // 2. Pig đưa diêm vào canon
-        animator.SetTrigger("LightingToCanon");
-        yield return new WaitForSeconds(1f);
-
-        // 3. Bắt đầu bắn liên tục (canon animation + spawn bomb)
+        // 2. Bắt đầu bắn liên tục (canon animation + spawn bomb)
         StartCoroutine(CanonFireRoutine());
     }
 
@@ -209,8 +205,7 @@ public class CanonPigController : MonoBehaviour
     private void ShootBomb()
     {
         if (bombOffPrefab != null && shootPoint != null)
-        {
-            // Debug.Log("Shoot bomb");            
+        {                   
             //tạo đối tượng quả bom ở vị trí đã khai báo sẵn ở inspector            
             GameObject bo = Instantiate(bombOffPrefab, shootPoint.position, Quaternion.identity);
 
@@ -218,8 +213,7 @@ public class CanonPigController : MonoBehaviour
             // --- Tính toán hướng bắn ---
             Vector2 target = player.position;
             Vector2 origin = shootPoint.position;
-            // Vector2 dir = (target - origin).normalized;
-
+         
             // --- Tính lực bắn ---
             float angle = 45f * Mathf.Deg2Rad; // góc bắn
             float distance = Vector2.Distance(origin, target); // khoảng cách bắn
@@ -237,15 +231,5 @@ public class CanonPigController : MonoBehaviour
 
             Destroy(bo, 1f);
         }
-    }
-    
-
-
-    // private void StartFiring()
-    // {
-    //     if (!hasDetectedPlayer) return; 
-    //     canonAnimator.SetTrigger("Fire");
-    //     ShootBomb();
-    // }
-
+    }    
 }
