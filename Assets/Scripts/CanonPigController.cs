@@ -59,12 +59,13 @@ public class CanonPigController : MonoBehaviour
     {
         if (hasDetectedPlayer)
         {
+            moveSpeed = 1.5f;
             HandleFlip();
             MoveToCanon();
         }
         else
-        {
-            // StopAllCoroutines();
+        {            
+            moveSpeed = 1f;
             Move();
             CheckCanonAhead();
             CheckGroundAhead();
@@ -134,22 +135,14 @@ public class CanonPigController : MonoBehaviour
 
     public void OnPlayerDetected(Transform pos)
     {
-        hasDetectedPlayer = true;
-        // StopAllCoroutines();
-        // playerTransform = pos;// vị trí mà player đang đứng
+        hasDetectedPlayer = true;      
     }
 
     public void OnPlayerExitRange()
     {
-        // Debug.Log("OnPlayerExitRange");
         // Đặt lại các biến trạng thái
-        hasDetectedPlayer = false;
+        hasDetectedPlayer = false;   
         hasStartedLighting = false;
-
-        // Dừng mọi Coroutine đang chạy trên CanonPigController
-        // StopAllCoroutines();
-        // CancelInvoke(nameof(StartFiring));
-
     }
 
     private void MoveToCanon()
@@ -160,13 +153,15 @@ public class CanonPigController : MonoBehaviour
         d = (float)Math.Round(d, 2);
         if (d > stoppingDistance)
         {
+            // Debug.Log("di chuyển tiếp d = " + d);
             transform.position = Vector2.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
             HandleFlip();
         }
         //canh con heo ở khoảng cách vừa phải để đứng trước canon,đảm bảo lệnh else được chạy        
-        else
+        else if (Mathf.Abs(d - stoppingDistance) < 0.1f)
+        // else
         {
-
+            // Debug.Log("Bắn liên tục");
             HandleFlip();   //đảm bảo con heo hướng về player trước khi châm ngòi nổ
             animator.SetBool("isRunning", false);
             // Lưu ý : không thể gọi liên tiếp 2 animation clip liên tiếp
@@ -197,6 +192,7 @@ public class CanonPigController : MonoBehaviour
     {
         while (hasDetectedPlayer) // chỉ bắn khi player còn trong vùng
         {
+
             canonAnimator.SetTrigger("Fire"); // animation canon bắn
             ShootBomb();                       // spawn bomb
             yield return new WaitForSeconds(timeBetweenShots);
@@ -229,7 +225,7 @@ public class CanonPigController : MonoBehaviour
             // --- Thực hiện bắn ---
             rb.AddForce(launchVelocity, ForceMode2D.Impulse);
 
-            Destroy(bo, 1f);
+            Destroy(bo, 1.5f);
         }
     }    
 }
