@@ -187,7 +187,6 @@ public class BombPigParabolicController : MonoBehaviour
         animator.SetBool("isRunning", false);
     }
 
-
     public void KnockBack(Transform attacker = null)
     {
         if (isKnockBack) return;

@@ -22,6 +22,11 @@ public class BombOffController : MonoBehaviour
 
         if (other.gameObject.CompareTag("Player"))
         {
+            PlayerHealth ph = other.GetComponent<PlayerHealth>();
+            if (ph != null)
+            {
+                ph.TakeDamage(1);
+            }
             bombPosition = other.transform.position;
             ExplodeAt(bombPosition);
             Destroy(gameObject, 0.2f);
@@ -36,12 +41,7 @@ public class BombOffController : MonoBehaviour
         // Sinh ra hiệu ứng nổ tại vị trí bom
         if (explosionPrefab != null)
         {
-            GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity);
-            // Animator expAnimator = explosion.GetComponent<Animator>();
-            Debug.Log("ExplodeAt: ");
-            // if (expAnimator != null)
-            //     expAnimator.SetTrigger("Exploding");
-
+            GameObject explosion = Instantiate(explosionPrefab, position, Quaternion.identity);            
             Destroy(explosion, 0.2f); // xóa hiệu ứng nổ
         }
         // Xóa bom sau khi nổ        
