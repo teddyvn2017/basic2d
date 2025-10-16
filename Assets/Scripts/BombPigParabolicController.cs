@@ -104,7 +104,7 @@ public class BombPigParabolicController : MonoBehaviour
         {
             Vector2 throwVelocity = CalculateThrow(targetPos, throwPoint.position);
             rb.linearVelocity = throwVelocity;
-            rb.angularVelocity = -360f;
+            rb.angularVelocity = -360f; //xoay quả bom trong quá trình rơi
         }
     }
 
